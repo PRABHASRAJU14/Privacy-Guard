@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>PrivacyGuard — Scan Results</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600;700&family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <script src="../js/theme.js"></script>
+    <link rel="stylesheet" href="../css/result.css">
+    <link rel="stylesheet" href="../css/theme.css">
+</head>
+
+
+<body>
+
+    <canvas id="ambientCanvas"></canvas>
+
+    <div class="bg-orb bg-orb-one orb-one"></div>
+    <div class="bg-orb bg-orb-two orb-two"></div>
+    <div class="bg-orb bg-orb-three orb-three"></div>
+    <div class="bg-orb bg-orb-four orb-four"></div>
+
+
+    <!-- HEADER -->
+
+    <header class="topbar">
+
+        <a href="../html/landing.html" class="brand">
+
+            <div class="brand-shield">
+
+                <svg viewBox="0 0 64 72" fill="none">
+
+                    <defs>
+                        <linearGradient id="brandGradient" x1="10" y1="5" x2="55" y2="68">
+                            <stop stop-color="#6677FF" />
+                            <stop offset="1" stop-color="#3215D8" />
+                        </linearGradient>
+                    </defs>
+
+                    <path d="M32 3L57 12V31C57 48 47 61 32 69C17 61 7 48 7 31V12L32 3Z" fill="url(#brandGradient)"
+                        stroke="#4131EF" stroke-width="3" />
+
+                    <path d="M32 14L47 19V31C47 41 42 50 32 56V14Z" fill="rgba(255,255,255,.85)" />
+
+                </svg>
+
+            </div>
+
+            <span>PrivacyGuard</span>
+
+        </a>
+
+    </header>
+
+    <!-- =====================================================
+     MAIN
+===================================================== -->
+
+    <main class="results-layout">
+
+
+        <!-- =================================================
+         LEFT SIDEBAR
+    ================================================== -->
+
+        <aside class="progress-sidebar">
+
+            <div class="progress-line"></div>
+
+
+            <!-- STEP 1 -->
+
+            <div class="progress-step completed">
+
+                <div class="step-circle">
+                    ✓
+                </div>
+
+                <div class="step-content">
+
+                    <strong>
+                        Scan
+                    </strong>
+
+                    <span>
+                        Upload or paste<br>
+                        your data
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- STEP 2 -->
+
+            <div class="progress-step active">
+
+                <div class="step-circle">
+                    2
+                </div>
+
+                <div class="step-content">
+
+                    <strong>
+                        Results
+                    </strong>
+
+                    <span>
+                        View detected<br>
+                        information
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- STEP 3 -->
+
+            <div class="progress-step">
+
+                <div class="step-circle">
+                    3
+                </div>
+
+                <div class="step-content">
+
+                    <strong>
+                        Purpose
+                    </strong>
+
+                    <span>
+                        Tell us why you're<br>
+                        sharing
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- STEP 4 -->
+
+            <div class="progress-step">
+
+                <div class="step-circle">
+                    4
+                </div>
+
+                <div class="step-content">
+
+                    <strong>
+                        Protect
+                    </strong>
+
+                    <span>
+                        Choose what to<br>
+                        keep or mask
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- STEP 5 -->
+
+            <div class="progress-step">
+
+                <div class="step-circle">
+                    5
+                </div>
+
+                <div class="step-content">
+
+                    <strong>
+                        Share
+                    </strong>
+
+                    <span>
+                        Get your<br>
+                        safe version
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <div class="sidebar-note">
+
+                Your<br>
+                Privacy<br>
+                Our Priority
+
+
+            </div>
+
+        </aside>
+
+
+        <!-- =================================================
+         RESULTS CARD
+    ================================================== -->
+
+        <section class="results-content">
+
+            <div class="results-card">
+
+
+                <!-- HEADER -->
+
+                <div class="results-header">
+
+                    <div>
+
+                        <div class="step-badge">
+                            ✦ STEP 2 OF 5
+                        </div>
+
+                        <h1>
+                            Scan
+                            <span>Results</span>
+                        </h1>
+
+                        <p>
+                            We found sensitive information in your
+                            content. Review the details below and
+                            continue to the next step.
+                        </p>
+
+                    </div>
+
+
+                    <div class="scan-time">
+
+                        <span>
+                            Scanned just now
+                        </span>
+
+                        <button id="scanAgainBtn">
+                            ↻ Scan Again
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =================================================
+                 SUMMARY CARDS
+            ================================================== -->
+
+                <div class="summary-grid">
+
+
+                    <!-- ITEMS -->
+
+                    <div class="summary-card danger">
+
+                        <div class="summary-icon">
+                            !
+                        </div>
+
+                        <div>
+
+                            <strong id="itemCount">
+                                0
+                            </strong>
+
+                            <span>
+                                Sensitive Items
+                            </span>
+
+                            <small>
+                                found in your content
+                            </small>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- RISK -->
+
+                    <div class="summary-card risk">
+
+                        <div class="risk-ring">
+
+                            <span id="riskScore">
+                                0%
+                            </span>
+
+                        </div>
+
+                        <div>
+
+                            <strong id="riskLevel">
+                                Safe
+                            </strong>
+
+                            <span>
+                                Privacy Risk
+                            </span>
+
+                            <small id="riskDescription">
+                                No sensitive information detected
+                            </small>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- PROTECTION -->
+
+                    <div class="summary-card secure">
+
+                        <div class="summary-icon shield">
+                            ✓
+                        </div>
+
+                        <div>
+
+                            <strong>
+                                Privacy Layer
+                            </strong>
+
+                            <span>
+                                Active
+                            </span>
+
+                            <small>
+                                Your data stays protected
+                            </small>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =================================================
+                 DETECTED INFORMATION
+            ================================================== -->
+
+                <div class="section-heading">
+
+                    <div>
+
+                        <h2>
+                            Detected Information
+                        </h2>
+
+                        <span id="detectedCount">
+                            0 items
+                        </span>
+
+                    </div>
+
+
+                    <select id="sortSelect">
+
+                        <option value="severity">
+                            Severity (High to Low)
+                        </option>
+
+                        <option value="name">
+                            Name
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="detected-list" id="detectedList">
+
+                    <!-- JS inserts detected items -->
+
+                </div>
+
+
+                <!-- =================================================
+                 CONTENT PREVIEW
+            ================================================== -->
+
+                <div class="content-section">
+
+                    <div class="content-heading">
+
+                        <h2>
+                            Your Content
+                            <span>(Highlighted)</span>
+                        </h2>
+
+                        <span>
+                            Sensitive information is highlighted
+                        </span>
+
+                    </div>
+
+
+                    <div class="content-preview" id="contentPreview">
+
+                        No content scanned yet.
+
+                    </div>
+
+                </div>
+
+
+                <!-- =================================================
+                 ACTIONS
+            ================================================== -->
+
+                <div class="results-actions">
+
+                    <a href="../html/scan.html" class="page-back-btn">
+                        Back to Scan
+                    </a>
+
+
+                    <a href="../html/purpose.html" class="primary-btn" id="continuePurposeBtn">
+
+                        Continue to Purpose
+
+                    </a>
+
+                </div>
+
+
+                <div class="privacy-footnote">
+
+                    🔒 PrivacyGuard analyzes your content before
+                    you share it.
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+         RIGHT 3D VISUAL
+    ================================================== -->
+
+        <aside class="visual-panel">
+
+            <div class="visual-glow"></div>
+
+
+            <div class="visual-note">
+
+                Detect.<br>
+                Understand.<br>
+                Protect.
+
+
+            </div>
+
+
+            <!-- DOCUMENT -->
+
+            <div class="floating-doc">
+
+                <div class="doc-icon">
+                    Aa
+                </div>
+
+                <div class="doc-lines">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+
+            </div>
+
+
+            <!-- IMAGE -->
+
+            <div class="floating-image">
+
+                <svg viewBox="0 0 24 24" fill="none">
+
+                    <rect x="3" y="3" width="18" height="18" rx="3" fill="rgba(255,255,255,.4)" stroke="#5268E8"
+                        stroke-width="1.5" />
+
+                    <circle cx="9" cy="9" r="2" fill="#5268E8" />
+
+                    <path d="m5 18 5-5 3 3 2-2 4 4" stroke="#5268E8" stroke-width="1.5" />
+
+                </svg>
+
+            </div>
+
+
+            <!-- SHIELD -->
+
+            <div class="result-shield">
+
+                <div class="shield-orbit orbit-one"></div>
+
+                <div class="shield-orbit orbit-two"></div>
+
+
+                <div class="shield-body">
+
+                    <svg viewBox="0 0 160 185" fill="none">
+
+                        <defs>
+
+                            <linearGradient id="resultShieldGradient" x1="20" y1="10" x2="140" y2="175">
+
+                                <stop stop-color="#7183FF" />
+
+                                <stop offset=".5" stop-color="#4056ED" />
+
+                                <stop offset="1" stop-color="#2412B6" />
+
+                            </linearGradient>
+
+                        </defs>
+
+
+                        <path d="M80 5 146 29v53c0 44-27 78-66 98C41 160 14 126 14 82V29L80 5Z"
+                            fill="url(#resultShieldGradient)" stroke="#8B96FF" stroke-width="2" />
+
+
+                        <path d="M80 21 129 39v42c0 34-19 60-49 78-30-18-49-44-49-78V39l49-18Z"
+                            fill="rgba(255,255,255,.08)" stroke="rgba(255,255,255,.45)" stroke-width="2" />
+
+
+                        <!-- CHECK -->
+
+                        <path d="M48 93l22 23 43-48" stroke="white" stroke-width="11" stroke-linecap="round"
+                            stroke-linejoin="round" />
+
+                    </svg>
+
+                </div>
+
+            </div>
+
+
+            <div class="visual-bottom-note">
+
+                A safer<br>
+                digital you
+
+
+            </div>
+
+
+            <div class="sphere sphere-one"></div>
+            <div class="sphere sphere-two"></div>
+            <div class="sphere sphere-three"></div>
+
+        </aside>
+
+    </main>
+
+
+    <!-- TOAST -->
+
+    <div class="toast-container" id="toastContainer"></div>
+
+
+    <script src="../js/result.js"></script>
+
+</body>
+
+</html>

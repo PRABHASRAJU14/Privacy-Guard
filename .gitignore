@@ -1,0 +1,28 @@
+# Virtual Environments
+.venv/
+venv/
+env/
+ENV/
+
+# Python Cache & Bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.pytest_cache/
+
+# Local Database & Storage
+backend/privacyguard.db
+backend/privacyguard.db-wal
+backend/privacyguard.db-shm
+backend/uploads/*
+!backend/uploads/.gitkeep
+backend/protected/*
+!backend/protected/.gitkeep
+
+# OS / Editor Files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+

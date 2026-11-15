@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PrivacyGuard Demo — Email Compose Test</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0f172a;
+            color: #f8fafc;
+            padding: 40px 20px;
+            display: flex;
+            justify-content: center;
+        }
+        .mail-card {
+            background: #1e293b;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            width: 100%;
+            max-width: 650px;
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4);
+            overflow: hidden;
+        }
+        .mail-header {
+            background: #0b0f19;
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .mail-header h2 {
+            font-size: 16px;
+            margin: 0;
+            color: #818cf8;
+        }
+        .form-group {
+            padding: 12px 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            align-items: center;
+        }
+        .form-label {
+            width: 80px;
+            color: #94a3b8;
+            font-size: 13px;
+        }
+        .form-input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: #f8fafc;
+            font-size: 14px;
+            outline: none;
+        }
+        textarea.form-input {
+            height: 220px;
+            font-family: monospace;
+            font-size: 13px;
+            line-height: 1.5;
+            padding: 14px 20px;
+            resize: vertical;
+        }
+        .mail-footer {
+            padding: 14px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #162032;
+        }
+        .btn-send {
+            background: #4f46e5;
+            color: white;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .hint {
+            font-size: 12px;
+            color: #94a3b8;
+        }
+    </style>
+</head>
+<body>
+    <div class="mail-card">
+        <div class="mail-header">
+            <h2>✉️ New Message — Expense Claim Submission</h2>
+            <span style="font-size: 12px; color: #22c55e;">● PrivacyGuard Shield Attached</span>
+        </div>
+        <div class="form-group">
+            <span class="form-label">To:</span>
+            <input class="form-input" type="text" value="finance-reimbursements@company.com" />
+        </div>
+        <div class="form-group">
+            <span class="form-label">Subject:</span>
+            <input class="form-input" type="text" value="Expense Reimbursement Claim - Uber Travel" />
+        </div>
+        <div>
+            <textarea id="emailBody" class="form-input">Merchant: Uber India
+Amount: ₹2,850
+Date: 05 Sep 2026
+Transaction ID: TXN84927361
+Bank Account: 4821 0098 7712
+UPI ID: rahul@bank
+Available Balance: ₹74,820
+
+Other Transactions:
+Amazon -₹4,299
+Swiggy -₹620
+Electricity -₹2,140</textarea>
+        </div>
+        <div class="mail-footer">
+            <button class="btn-send">Send Email</button>
+            <span class="hint">Click the PrivacyGuard extension or floating shield to protect.</span>
+        </div>
+    </div>
+</body>
+</html>

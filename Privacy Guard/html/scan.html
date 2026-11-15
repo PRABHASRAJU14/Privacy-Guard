@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>PrivacyGuard — Scan Your Data</title>
+
+    <meta name="description" content="Scan your content for sensitive personal information before sharing.">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600;700&family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <script src="../js/theme.js"></script>
+    <link rel="stylesheet" href="../css/scan.css">
+    <link rel="stylesheet" href="../css/theme.css">
+</head>
+
+
+<body>
+
+    <!-- =====================================================
+     BACKGROUND
+===================================================== -->
+
+    <canvas id="ambientCanvas"></canvas>
+
+    <div class="bg-orb bg-orb-one orb-one"></div>
+    <div class="bg-orb bg-orb-two orb-two"></div>
+    <div class="bg-orb bg-orb-three orb-three"></div>
+    <div class="bg-orb bg-orb-four orb-four"></div>
+
+
+    <!-- =====================================================
+     NAVBAR
+===================================================== -->
+
+    <header class="topbar">
+
+        <a href="../html/landing.html" class="brand">
+
+            <div class="brand-shield">
+
+                <svg viewBox="0 0 64 72" fill="none">
+
+                    <defs>
+                        <linearGradient id="brandGradient" x1="10" y1="5" x2="55" y2="68">
+                            <stop stop-color="#6677FF" />
+
+                            <stop offset="1" stop-color="#3215D8" />
+                        </linearGradient>
+                    </defs>
+
+                    <path d="M32 3L57 12V31C57 48 47 61 32 69C17 61 7 48 7 31V12L32 3Z" fill="url(#brandGradient)"
+                        stroke="#4131EF" stroke-width="3" />
+
+                    <path d="M32 14L47 19V31C47 41 42 50 32 56V14Z" fill="rgba(255,255,255,.85)" />
+
+                </svg>
+
+            </div>
+
+            <span>
+                PrivacyGuard
+            </span>
+
+        </a>
+
+
+        <div class="topbar-actions">
+
+            <a href="../html/landing.html" class="page-back-btn">
+                Dashboard
+            </a>
+
+        </div>
+
+    </header>
+
+
+    <!-- =====================================================
+     MAIN LAYOUT
+===================================================== -->
+
+    <main class="scan-layout">
+
+
+        <!-- =================================================
+         LEFT SIDEBAR
+    ================================================== -->
+
+        <aside class="progress-sidebar">
+
+            <div class="progress-line"></div>
+
+
+            <!-- STEP 1 -->
+
+            <div class="progress-step active" data-step="1">
+
+                <div class="step-circle">
+                    1
+                </div>
+
+                <div class="step-content">
+
+                    <strong>
+                        Scan
+                    </strong>
+
+                    <span>
+                        Upload or paste<br>
+                        your data
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- STEP 2 -->
+
+            <div class="progress-step" data-step="2">
+
+                <div class="step-circle">
+                    2
+                </div>
+
+                <div class="step-content">
+
+                    <strong>
+                        Results
+                    </strong>
+
+                    <span>
+                        View detected<br>
+                        information
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- STEP 3 -->
+
+            <div class="progress-step" data-step="3">
+
+                <div class="step-circle">
+                    3
+                </div>
+
+                <div class="step-content">
+
+                    <strong>
+                        Purpose
+                    </strong>
+
+                    <span>
+                        Tell us why you're<br>
+                        sharing
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- STEP 4 -->
+
+            <div class="progress-step" data-step="4">
+
+                <div class="step-circle">
+                    4
+                </div>
+
+                <div class="step-content">
+
+                    <strong>
+                        Protect
+                    </strong>
+
+                    <span>
+                        Choose what to<br>
+                        keep or mask
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- STEP 5 -->
+
+            <div class="progress-step" data-step="5">
+
+                <div class="step-circle">
+                    5
+                </div>
+
+                <div class="step-content">
+
+                    <strong>
+                        Share
+                    </strong>
+
+                    <span>
+                        Get your<br>
+                        safe version
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <div class="sidebar-note">
+
+                <div>
+                    Your<br>
+                    Privacy<br>
+                    Our Priority
+                </div>
+
+
+            </div>
+
+        </aside>
+
+
+        <!-- =================================================
+         CENTER CONTENT
+    ================================================== -->
+
+        <section class="scan-content">
+
+
+            <div class="scan-card">
+
+
+                <!-- HEADER -->
+
+                <div class="scan-card-header">
+
+                    <div class="scan-badge">
+
+                        <span>
+                            ✦
+                        </span>
+
+                        STEP 1 OF 5
+
+                    </div>
+
+
+                    <div class="secure-status">
+
+                        <span class="status-dot"></span>
+
+                        Privacy layer active
+
+                    </div>
+
+                </div>
+
+
+                <h1>
+                    What do you want
+                    <span>to share?</span>
+                </h1>
+
+
+                <p class="scan-description">
+
+                    Paste your content or upload a file.
+                    PrivacyGuard will scan it for sensitive
+                    personal information before you share it.
+
+                </p>
+
+
+                <!-- =================================================
+                 DROPZONE
+            ================================================== -->
+
+                <div class="drop-zone" id="dropZone">
+
+                    <input type="file" id="fileInput" accept=".txt,.pdf,.doc,.docx,.csv,.xlsx,.png,.jpg,.jpeg" hidden>
+
+
+                    <div class="upload-icon">
+
+                        <svg viewBox="0 0 24 24" fill="none">
+
+                            <path d="M12 16V4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+
+                            <path d="m7 9 5-5 5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+                                stroke-linejoin="round" />
+
+                            <path d="M5 14v4a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-4" stroke="currentColor" stroke-width="1.8"
+                                stroke-linecap="round" />
+
+                        </svg>
+
+                    </div>
+
+
+                    <h3>
+                        Drop your file here
+                    </h3>
+
+
+                    <p>
+                        or
+                    </p>
+
+
+                    <button type="button" class="browse-btn" id="browseBtn">
+                        Browse Files
+                    </button>
+
+
+                    <span class="file-types">
+                        PNG • JPG • PDF • DOCX • CSV • XLSX • TXT
+                    </span>
+
+                </div>
+
+
+                <div class="or-divider">
+
+                    <span></span>
+
+                    OR
+
+                    <span></span>
+
+                </div>
+
+
+                <!-- =================================================
+                 TEXT INPUT
+            ================================================== -->
+
+                <div class="text-input-section">
+
+                    <div class="input-heading">
+
+                        <div>
+
+                            <strong>
+                                Paste your content
+                            </strong>
+
+                            <span>
+                                Text, message, email or document content
+                            </span>
+
+                        </div>
+
+
+                        <span class="character-count">
+                            <span id="characterCount">0</span>
+                            characters
+                        </span>
+
+                    </div>
+
+
+                    <div class="textarea-wrapper">
+
+                        <textarea id="scanText"
+                            placeholder="Example: My Aadhaar is 4567 8912 3456 and my phone number is 9876543210..."></textarea>
+
+
+                        <div class="textarea-bottom">
+
+                            <span>
+                                🔒 Your content is scanned before sharing.
+                            </span>
+
+                            <button type="button" id="clearBtn">
+                                Clear
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =================================================
+                 QUICK SAMPLE
+            ================================================== -->
+
+                <div class="quick-example">
+
+                    <span>
+                        Try an example:
+                    </span>
+
+                    <button class="sample-btn active" data-sample="expense">
+                        🧾 Expense Receipt (Uber)
+                    </button>
+
+                    <button class="sample-btn" data-sample="aadhaar">
+                        Aadhaar + Phone
+                    </button>
+
+                    <button class="sample-btn" data-sample="payment">
+                        Payment Details
+                    </button>
+
+                    <button class="sample-btn" data-sample="clean">
+                        Clean Text
+                    </button>
+
+                </div>
+
+
+                <!-- =================================================
+                 SCAN BUTTON
+            ================================================== -->
+
+                <button class="scan-button" id="scanButton">
+
+                    <span class="scan-button-icon">
+                        🔍
+                    </span>
+
+                    <span id="scanButtonText">
+                        Scan for Privacy Risks
+                    </span>
+
+                </button>
+
+
+                <p class="scan-footnote">
+
+                    Your data stays within the PrivacyGuard
+                    protection flow until you choose to share it.
+
+                </p>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+         RIGHT 3D VISUAL
+    ================================================== -->
+
+        <aside class="visual-panel">
+
+            <div class="visual-glow"></div>
+
+
+            <!-- handwritten note -->
+
+            <div class="visual-note">
+                Share what's<br>
+                needed.<br>
+                Not everything.
+            </div>
+
+
+            <!-- floating document -->
+
+            <div class="floating-card floating-document">
+
+                <svg viewBox="0 0 24 24" fill="none">
+
+                    <path d="M6 3h9l4 4v14H6z" fill="rgba(255,255,255,.65)" stroke="#5268E8" stroke-width="1.4" />
+
+                    <path d="M15 3v5h4" stroke="#5268E8" stroke-width="1.4" />
+
+                    <path d="M9 13h6M9 17h5" stroke="#5268E8" stroke-width="1.4" stroke-linecap="round" />
+
+                </svg>
+
+            </div>
+
+
+            <!-- floating image -->
+
+            <div class="floating-card floating-image">
+
+                <svg viewBox="0 0 24 24" fill="none">
+
+                    <rect x="3" y="3" width="18" height="18" rx="3" fill="rgba(255,255,255,.5)" stroke="#5268E8"
+                        stroke-width="1.4" />
+
+                    <circle cx="9" cy="9" r="2" fill="#5268E8" />
+
+                    <path d="m5 18 5-5 3 3 2-2 4 4" stroke="#5268E8" stroke-width="1.4" stroke-linecap="round"
+                        stroke-linejoin="round" />
+
+                </svg>
+
+            </div>
+
+
+            <!-- floating PDF -->
+
+            <div class="floating-card floating-pdf">
+                <span>PDF</span>
+            </div>
+
+
+            <!-- 3D SHIELD -->
+
+            <div class="hero-shield">
+
+                <div class="shield-orbit orbit-one"></div>
+                <div class="shield-orbit orbit-two"></div>
+
+
+                <div class="shield-body">
+
+                    <svg viewBox="0 0 160 185" fill="none">
+
+                        <defs>
+
+                            <linearGradient id="mainShieldGradient" x1="20" y1="10" x2="140" y2="175">
+
+                                <stop stop-color="#7080FF" />
+
+                                <stop offset=".45" stop-color="#4056ED" />
+
+                                <stop offset="1" stop-color="#2514B8" />
+
+                            </linearGradient>
+
+                            <linearGradient id="glassHighlight" x1="30" y1="15" x2="125" y2="150">
+
+                                <stop stop-color="white" stop-opacity=".65" />
+
+                                <stop offset="1" stop-color="white" stop-opacity="0" />
+
+                            </linearGradient>
+
+                        </defs>
+
+
+                        <path d="M80 5 146 29v53c0 44-27 78-66 98C41 160 14 126 14 82V29L80 5Z"
+                            fill="url(#mainShieldGradient)" stroke="#7C8AFF" stroke-width="2" />
+
+
+                        <path d="M80 21 129 39v42c0 34-19 60-49 78-30-18-49-44-49-78V39l49-18Z"
+                            fill="rgba(255,255,255,.09)" stroke="rgba(255,255,255,.5)" stroke-width="2" />
+
+
+                        <path d="M80 23 123 39" stroke="url(#glassHighlight)" stroke-width="9" stroke-linecap="round"
+                            opacity=".55" />
+
+
+                        <!-- lock -->
+
+                        <rect x="48" y="82" width="64" height="52" rx="11" fill="rgba(255,255,255,.94)" />
+
+
+                        <path d="M61 82V68a19 19 0 0 1 38 0v14" stroke="white" stroke-width="10"
+                            stroke-linecap="round" />
+
+
+                        <circle cx="80" cy="106" r="7" fill="#4055E2" />
+
+                        <path d="M80 112v10" stroke="#4055E2" stroke-width="4" stroke-linecap="round" />
+
+                    </svg>
+
+                </div>
+
+            </div>
+
+
+            <div class="visual-bottom-note">
+                A safer<br>
+                digital you
+            </div>
+
+
+            <!-- small floating spheres -->
+
+            <div class="sphere sphere-one"></div>
+            <div class="sphere sphere-two"></div>
+            <div class="sphere sphere-three"></div>
+
+        </aside>
+
+    </main>
+
+
+    <!-- =====================================================
+     SCANNING OVERLAY
+===================================================== -->
+
+    <div class="scan-overlay" id="scanOverlay">
+
+        <div class="scan-loading-card">
+
+            <div class="loading-shield">
+                🛡️
+            </div>
+
+            <h2>
+                Scanning your content
+            </h2>
+
+            <p>
+                PrivacyGuard is checking for
+                sensitive information...
+            </p>
+
+            <div class="loading-progress">
+
+                <div class="loading-progress-bar" id="loadingProgressBar"></div>
+
+            </div>
+
+            <div class="loading-status" id="loadingStatus">
+                Detecting sensitive data...
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+     TOAST
+===================================================== -->
+
+    <div class="toast-container" id="toastContainer"></div>
+
+
+    <script src="../js/scan.js"></script>
+
+</body>
+
+</html>

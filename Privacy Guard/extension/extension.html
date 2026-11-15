@@ -1,0 +1,984 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>PrivacyGuard — Smart Sharing Demo</title>
+
+    <link rel="stylesheet" href="extension.css">
+</head>
+
+<body>
+
+<div class="browser">
+
+    <!-- =====================================================
+         BROWSER TOP BAR
+    ====================================================== -->
+
+    <header class="browser-bar">
+
+        <div class="browser-controls">
+            <span>↻</span>
+        </div>
+
+        <div class="address-bar">
+            <span class="lock">⌕</span>
+            mail.google.com
+        </div>
+
+        <div class="browser-right">
+            ⋮
+        </div>
+
+    </header>
+
+
+    <!-- =====================================================
+         MAIN WORKSPACE
+    ====================================================== -->
+
+    <div class="workspace">
+
+
+        <!-- =================================================
+             GMAIL SIDEBAR
+        ================================================== -->
+
+        <aside class="gmail-sidebar">
+
+            <div class="gmail-brand">
+
+                <div class="gmail-m">
+                    M
+                </div>
+
+                <span>
+                    Gmail
+                </span>
+
+            </div>
+
+
+            <button class="compose-btn">
+                ＋ &nbsp; Compose
+            </button>
+
+
+            <nav class="gmail-nav">
+
+                <div class="nav-item active">
+                    <span>✉</span>
+                    Inbox
+                    <b>12</b>
+                </div>
+
+                <div class="nav-item">
+                    <span>★</span>
+                    Starred
+                </div>
+
+                <div class="nav-item">
+                    <span>◷</span>
+                    Snoozed
+                </div>
+
+                <div class="nav-item">
+                    <span>➤</span>
+                    Sent
+                </div>
+
+                <div class="nav-item">
+                    <span>▱</span>
+                    Drafts
+                    <b>3</b>
+                </div>
+
+                <div class="nav-item">
+                    <span>⌄</span>
+                    More
+                </div>
+
+            </nav>
+
+        </aside>
+
+
+        <!-- =================================================
+             GMAIL CONTENT
+        ================================================== -->
+
+        <main class="gmail-content">
+
+
+            <!-- TOP -->
+
+            <div class="gmail-top">
+
+                <div class="search">
+
+                    <span>⌕</span>
+
+                    Search mail
+
+                </div>
+
+                <div class="top-icons">
+                    ⚙ &nbsp;&nbsp; ⋮
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 COMPOSE WINDOW
+            ================================================== -->
+
+            <section class="compose-window">
+
+
+                <!-- HEADER -->
+
+                <div class="compose-header">
+
+                    <strong>
+                        New Message
+                    </strong>
+
+                    <div>
+                        − &nbsp; □ &nbsp;
+                        <span class="extension-close" role="button" tabindex="0" aria-label="Close extension">×</span>
+                    </div>
+
+                </div>
+
+
+                <!-- TO -->
+
+                <div class="mail-row">
+
+                    <span class="mail-label">
+                        To
+                    </span>
+
+                    <div class="recipient">
+                        finance@company.com
+                    </div>
+
+                </div>
+
+
+                <!-- SUBJECT -->
+
+                <div class="mail-subject">
+
+                    Expense Reimbursement — Travel ₹2,850
+
+                </div>
+
+
+                <!-- EMAIL -->
+
+                <div
+                    class="email-body"
+                    contenteditable="true"
+                    id="emailBody"
+                >
+
+                    <p>
+                        Hi Finance Team,
+                    </p>
+
+                    <p>
+                        Please find attached the payment proof
+                        for my travel expense of
+                        <strong>₹2,850</strong>.
+                    </p>
+
+                    <p>
+                        The transaction was made to
+                        <strong>Uber India</strong>
+                        on
+                        <strong>05 Sep 2026</strong>.
+                    </p>
+
+                    <p>
+                        Please process the reimbursement.
+                    </p>
+
+                    <p>
+                        Thanks,<br>
+                        Rahul Sharma
+                    </p>
+
+                </div>
+
+
+                <!-- =================================================
+                     ATTACHED IMAGE
+                ================================================== -->
+
+                <div class="attachment-wrapper">
+
+                    <div class="attachment-card">
+
+
+                        <!-- IMAGE PREVIEW -->
+
+                        <div class="image-preview">
+
+                            <div
+                                class="bank-screenshot"
+                                id="bankScreenshot"
+                            >
+
+                                <!-- BANK HEADER -->
+
+                                <div class="bank-header">
+
+                                    <span>‹</span>
+
+                                    <strong>
+                                        HDFC BANK
+                                    </strong>
+
+                                    <span>⋮</span>
+
+                                </div>
+
+
+                                <!-- SUCCESS -->
+
+                                <div class="payment-check">
+                                    ✓
+                                </div>
+
+                                <div class="payment-success-text">
+                                    Payment Successful
+                                </div>
+
+                                <div class="payment-amount">
+                                    ₹2,850
+                                </div>
+
+
+                                <div class="bank-divider"></div>
+
+
+                                <!-- REQUIRED INFORMATION -->
+
+                                <div class="bank-field required">
+
+                                    <span>
+                                        Paid to
+                                    </span>
+
+                                    <strong>
+                                        Uber India
+                                    </strong>
+
+                                </div>
+
+
+                                <div class="bank-field required">
+
+                                    <span>
+                                        Date
+                                    </span>
+
+                                    <strong>
+                                        05 Sep 2026
+                                    </strong>
+
+                                </div>
+
+
+                                <div class="bank-field required">
+
+                                    <span>
+                                        Transaction ID
+                                    </span>
+
+                                    <strong>
+                                        TXN84927361
+                                    </strong>
+
+                                </div>
+
+
+                                <!-- SENSITIVE INFORMATION -->
+
+                                <div class="bank-field sensitive">
+
+                                    <span>
+                                        Account
+                                    </span>
+
+                                    <strong>
+                                        4821 0098 7712
+                                    </strong>
+
+                                </div>
+
+
+                                <div class="bank-field sensitive">
+
+                                    <span>
+                                        UPI ID
+                                    </span>
+
+                                    <strong>
+                                        rahul@bank
+                                    </strong>
+
+                                </div>
+
+
+                                <div class="bank-balance sensitive">
+
+                                    <span>
+                                        Available Balance
+                                    </span>
+
+                                    <strong>
+                                        ₹74,820
+                                    </strong>
+
+                                </div>
+
+
+                                <!-- TRANSACTIONS -->
+
+                                <div class="recent-heading">
+                                    Recent Transactions
+                                </div>
+
+
+                                <div class="recent-row sensitive">
+
+                                    <span>
+                                        Amazon
+                                    </span>
+
+                                    <strong>
+                                        −₹4,299
+                                    </strong>
+
+                                </div>
+
+
+                                <div class="recent-row sensitive">
+
+                                    <span>
+                                        Swiggy
+                                    </span>
+
+                                    <strong>
+                                        −₹620
+                                    </strong>
+
+                                </div>
+
+
+                                <div class="recent-row sensitive">
+
+                                    <span>
+                                        Electricity
+                                    </span>
+
+                                    <strong>
+                                        −₹2,140
+                                    </strong>
+
+                                </div>
+
+
+                                <!-- PROTECTED STAMP -->
+
+                                <div
+                                    class="protected-stamp"
+                                    id="protectedStamp"
+                                >
+                                    🛡 PROTECTED
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- FILE INFORMATION -->
+
+                        <div class="file-information">
+
+                            <div class="file-name">
+                                transaction_screenshot.png
+                            </div>
+
+                            <div class="file-size">
+                                842 KB • PNG
+                            </div>
+
+                            <div
+                                class="file-status"
+                                id="fileStatus"
+                            >
+                                🛡 Scanned by PrivacyGuard
+                            </div>
+
+                        </div>
+
+
+                        <button
+                            class="remove-file"
+                            id="removeFile"
+                        >
+                            ×
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <!-- TOOLBAR -->
+
+                <div class="compose-toolbar">
+
+                    <div class="toolbar-left">
+
+                        <button
+                            class="send-btn"
+                            id="sendButton"
+                        >
+                            Send
+                        </button>
+
+                        <span>📎</span>
+                        <span>🔗</span>
+                        <span>☺</span>
+                        <span>▣</span>
+                        <span>⋮</span>
+
+                    </div>
+
+                    <span>
+                        🗑
+                    </span>
+
+                </div>
+
+            </section>
+
+        </main>
+
+
+        <!-- =================================================
+             PRIVACYGUARD PANEL
+        ================================================== -->
+
+        <aside class="privacy-panel">
+
+
+            <!-- HEADER -->
+
+            <div class="privacy-header">
+
+                <div class="privacy-brand">
+
+                    <div class="privacy-shield">
+                        🛡
+                    </div>
+
+                    <div>
+
+                        <strong>
+                            PrivacyGuard
+                        </strong>
+
+                        <span>
+                            Smart Privacy Layer
+                        </span>
+
+                    </div>
+
+                </div>
+
+                <div class="panel-menu">
+                    ⚙ &nbsp;
+                    <span class="extension-close" role="button" tabindex="0" aria-label="Close extension">×</span>
+                </div>
+
+            </div>
+
+
+            <!-- REAL TIME SCANNING -->
+
+            <div class="live-scan">
+
+                <div class="scan-circle">
+                    ✦
+                </div>
+
+                <div class="scan-text">
+
+                    <strong>
+                        Scanning in real-time
+                    </strong>
+
+                    <span>
+                        Message + attached image
+                    </span>
+
+                </div>
+
+                <div class="live-badge">
+                    LIVE
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 WARNING
+            ================================================== -->
+
+            <div
+                class="warning"
+                id="warning"
+            >
+
+                <div class="warning-symbol">
+                    !
+                </div>
+
+                <div class="warning-copy">
+
+                    <strong id="warningTitle">
+                        Sensitive information detected
+                    </strong>
+
+                    <span id="warningDescription">
+                        Your screenshot contains financial
+                        information that may not be needed
+                        for this purpose.
+                    </span>
+
+                </div>
+
+                <div class="exposure-count">
+
+                    <strong id="exposureCount">
+                        7
+                    </strong>
+
+                    <span>
+                        items
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 PURPOSE
+            ================================================== -->
+
+            <div class="purpose-card">
+
+                <div class="purpose-top">
+
+                    <strong>
+                        Sharing purpose
+                    </strong>
+
+                    <span>
+                        Why are you sharing?
+                    </span>
+
+                </div>
+
+
+                <select id="purposeSelect">
+
+                    <option selected>
+                        Expense Reimbursement
+                    </option>
+
+                    <option>
+                        Bank Verification
+                    </option>
+
+                    <option>
+                        Loan Application
+                    </option>
+
+                    <option>
+                        General Sharing
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <!-- =================================================
+                 KEEP / PROTECT
+            ================================================== -->
+
+            <div class="decision-header">
+
+                <span>
+                    PRIVACYGUARD RECOMMENDATION
+                </span>
+
+                <span>
+                    7 detected
+                </span>
+
+            </div>
+
+
+            <!-- KEEP -->
+
+            <div class="group-title keep-title">
+                ✓ KEEP — needed to verify payment
+            </div>
+
+
+            <div class="data-row keep">
+
+                <div class="data-symbol">
+                    ₹
+                </div>
+
+                <div class="data-content">
+
+                    <strong>
+                        Merchant
+                    </strong>
+
+                    <span>
+                        Uber India
+                    </span>
+
+                </div>
+
+                <div class="decision keep">
+                    KEEP
+                </div>
+
+            </div>
+
+
+            <div class="data-row keep">
+
+                <div class="data-symbol">
+                    ₹
+                </div>
+
+                <div class="data-content">
+
+                    <strong>
+                        Amount
+                    </strong>
+
+                    <span>
+                        ₹2,850
+                    </span>
+
+                </div>
+
+                <div class="decision keep">
+                    KEEP
+                </div>
+
+            </div>
+
+
+            <div class="data-row keep">
+
+                <div class="data-symbol">
+                    ◷
+                </div>
+
+                <div class="data-content">
+
+                    <strong>
+                        Transaction Date
+                    </strong>
+
+                    <span>
+                        05 Sep 2026
+                    </span>
+
+                </div>
+
+                <div class="decision keep">
+                    KEEP
+                </div>
+
+            </div>
+
+
+            <div class="data-row keep">
+
+                <div class="data-symbol">
+                    #
+                </div>
+
+                <div class="data-content">
+
+                    <strong>
+                        Transaction ID
+                    </strong>
+
+                    <span>
+                        TXN84927361
+                    </span>
+
+                </div>
+
+                <div class="decision keep">
+                    KEEP
+                </div>
+
+            </div>
+
+
+            <!-- PROTECT -->
+
+            <div class="group-title protect-title">
+                ⚠ PROTECT — not needed for this proof
+            </div>
+
+
+            <div class="data-row protect">
+
+                <div class="data-symbol bank-icon">
+                    🏦
+                </div>
+
+                <div class="data-content">
+
+                    <strong>
+                        Bank Account
+                    </strong>
+
+                    <span>
+                        4821 0098 7712
+                    </span>
+
+                </div>
+
+                <div class="decision protect">
+                    PROTECT
+                </div>
+
+            </div>
+
+
+            <div class="data-row protect">
+
+                <div class="data-symbol upi-icon">
+                    U
+                </div>
+
+                <div class="data-content">
+
+                    <strong>
+                        UPI ID
+                    </strong>
+
+                    <span>
+                        rahul@bank
+                    </span>
+
+                </div>
+
+                <div class="decision protect">
+                    PROTECT
+                </div>
+
+            </div>
+
+
+            <div class="data-row protect">
+
+                <div class="data-symbol balance-icon">
+                    ◉
+                </div>
+
+                <div class="data-content">
+
+                    <strong>
+                        Available Balance
+                    </strong>
+
+                    <span>
+                        ₹74,820
+                    </span>
+
+                </div>
+
+                <div class="decision protect">
+                    PROTECT
+                </div>
+
+            </div>
+
+
+            <div class="data-row protect">
+
+                <div class="data-symbol other-icon">
+                    •••
+                </div>
+
+                <div class="data-content">
+
+                    <strong>
+                        Other Transactions
+                    </strong>
+
+                    <span>
+                        3 unrelated transactions
+                    </span>
+
+                </div>
+
+                <div class="decision protect">
+                    PROTECT
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 WHY
+            ================================================== -->
+
+            <div class="why-box">
+
+                <div class="why-icon">
+                    ✦
+                </div>
+
+                <div>
+
+                    <strong>
+                        Why are we protecting these?
+                    </strong>
+
+                    <span>
+                        Your purpose is to prove one payment.
+                        Your account balance, UPI ID and other
+                        transactions don't help verify that payment.
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 RESULT
+            ================================================== -->
+
+            <div
+                class="result-box"
+                id="resultBox"
+            >
+
+                <div class="result-icon">
+                    🛡
+                </div>
+
+                <div class="result-content">
+
+                    <strong id="resultTitle">
+                        More privacy, same proof
+                    </strong>
+
+                    <span id="resultText">
+                        Protect unnecessary information
+                        without removing the evidence.
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 ACTIONS
+            ================================================== -->
+
+            <div class="actions">
+
+                <button
+                    class="ignore-btn"
+                    id="ignoreButton"
+                >
+                    Ignore & Send
+                </button>
+
+                <button
+                    class="protect-btn"
+                    id="protectButton"
+                >
+                    🛡 Protect & Continue
+                </button>
+
+            </div>
+
+
+            <!-- FOOTER -->
+
+            <div
+                class="privacy-footer"
+                id="privacyFooter"
+            >
+                🔒 PrivacyGuard minimizes what leaves your browser.
+            </div>
+
+        </aside>
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     TOAST
+====================================================== -->
+
+<div
+    class="toast"
+    id="toast"
+>
+
+    <div class="toast-icon">
+        ✓
+    </div>
+
+    <div>
+
+        <strong id="toastTitle">
+            Protected successfully
+        </strong>
+
+        <span id="toastMessage">
+            Sensitive information was masked.
+        </span>
+
+    </div>
+
+</div>
+
+
+<script src="extension.js"></script>
+
+</body>
+</html>

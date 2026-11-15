@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>PrivacyGuard — Choose Purpose</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600;700&family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <script src="../js/theme.js"></script>
+    <link rel="stylesheet" href="../css/purpose.css">
+    <link rel="stylesheet" href="../css/theme.css">
+
+</head>
+
+
+<body>
+
+    <canvas id="ambientCanvas"></canvas>
+
+    <div class="bg-orb bg-orb-one orb-one"></div>
+    <div class="bg-orb bg-orb-two orb-two"></div>
+    <div class="bg-orb bg-orb-three orb-three"></div>
+    <div class="bg-orb bg-orb-four orb-four"></div>
+
+
+    <!-- =====================================================
+     TOP BAR
+===================================================== -->
+
+    <header class="topbar topbar-cover">
+
+        <a href="../html/landing.html" class="brand">
+
+            <div class="brand-shield">
+
+                <svg viewBox="0 0 64 72" fill="none">
+
+                    <defs>
+
+                        <linearGradient id="brandGradient" x1="10" y1="5" x2="55" y2="68">
+
+                            <stop stop-color="#6677FF" />
+
+                            <stop offset="1" stop-color="#3215D8" />
+
+                        </linearGradient>
+
+                    </defs>
+
+                    <path d="M32 3L57 12V31C57 48 47 61 32 69C17 61 7 48 7 31V12L32 3Z" fill="url(#brandGradient)"
+                        stroke="#4131EF" stroke-width="3" />
+
+                    <path d="M32 14L47 19V31C47 41 42 50 32 56V14Z" fill="rgba(255,255,255,.85)" />
+
+                </svg>
+
+            </div>
+
+            <span>
+                PrivacyGuard
+            </span>
+
+        </a>
+
+
+    </header>
+
+
+
+    <!-- =====================================================
+     MAIN LAYOUT
+===================================================== -->
+
+    <main class="purpose-layout">
+
+
+        <!-- =================================================
+         SIDEBAR
+    ================================================== -->
+
+        <aside class="progress-sidebar">
+
+            <div class="progress-line"></div>
+
+
+            <!-- STEP 1 -->
+
+            <div class="progress-step completed">
+
+                <div class="step-circle">
+                    ✓
+                </div>
+
+                <div class="step-content">
+
+                    <strong>
+                        Scan
+                    </strong>
+
+                    <span>
+                        Upload or paste<br>
+                        your data
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- STEP 2 -->
+
+            <div class="progress-step completed">
+
+                <div class="step-circle">
+                    ✓
+                </div>
+
+                <div class="step-content">
+
+                    <strong>
+                        Results
+                    </strong>
+
+                    <span>
+                        View detected<br>
+                        information
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- STEP 3 -->
+
+            <div class="progress-step active">
+
+                <div class="step-circle">
+                    3
+                </div>
+
+                <div class="step-content">
+
+                    <strong>
+                        Purpose
+                    </strong>
+
+                    <span>
+                        Tell us why you're<br>
+                        sharing
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- STEP 4 -->
+
+            <div class="progress-step">
+
+                <div class="step-circle">
+                    4
+                </div>
+
+                <div class="step-content">
+
+                    <strong>
+                        Protect
+                    </strong>
+
+                    <span>
+                        Choose what to<br>
+                        keep or mask
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- STEP 5 -->
+
+            <div class="progress-step">
+
+                <div class="step-circle">
+                    5
+                </div>
+
+                <div class="step-content">
+
+                    <strong>
+                        Share
+                    </strong>
+
+                    <span>
+                        Get your<br>
+                        safe version
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <div class="sidebar-note">
+
+                Your<br>
+                Privacy<br>
+                Our Priority
+
+
+            </div>
+
+        </aside>
+
+
+
+        <!-- =================================================
+         CENTER CONTENT
+    ================================================== -->
+
+        <section class="purpose-content">
+
+            <div class="purpose-card">
+
+
+                <!-- HEADER -->
+
+                <div class="page-header">
+
+                    <div>
+
+                        <div class="step-badge">
+                            ✦ STEP 3 OF 5
+                        </div>
+
+
+                        <h1>
+
+                            Why are you
+                            <span>sharing this?</span>
+
+                        </h1>
+
+
+                        <p>
+
+                            Your purpose helps PrivacyGuard
+                            determine the minimum information
+                            actually needed.
+
+                        </p>
+
+                    </div>
+
+
+                    <div class="privacy-active">
+
+                        <span></span>
+
+                        Privacy layer active
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- =================================================
+                 PURPOSE GRID
+            ================================================== -->
+
+                <div class="purpose-grid">
+
+
+                    <!-- EXPENSE REIMBURSEMENT -->
+
+                    <button class="purpose-option active" data-purpose="expense">
+
+                        <div class="purpose-icon green">
+                            🧾
+                        </div>
+
+                        <div class="purpose-info">
+
+                            <strong>
+                                Expense Reimbursement
+                            </strong>
+
+                            <span>
+                                Keep expense verification info, protect unrelated financial details
+                            </span>
+
+                        </div>
+
+                        <div class="purpose-check">
+                            ✓
+                        </div>
+
+                    </button>
+
+
+
+                    <!-- JOB -->
+
+                    <button class="purpose-option" data-purpose="job">
+
+                        <div class="purpose-icon purple">
+                            💼
+                        </div>
+
+                        <div class="purpose-info">
+
+                            <strong>
+                                Job Application
+                            </strong>
+
+                            <span>
+                                Resume, recruiter or
+                                employment verification
+                            </span>
+
+                        </div>
+
+                        <div class="purpose-check">
+                            ✓
+                        </div>
+
+                    </button>
+
+
+
+                    <!-- AGE -->
+
+                    <button class="purpose-option" data-purpose="age">
+
+                        <div class="purpose-icon blue">
+                            🎂
+                        </div>
+
+                        <div class="purpose-info">
+
+                            <strong>
+                                Age Verification
+                            </strong>
+
+                            <span>
+                                Prove you meet an age
+                                requirement
+                            </span>
+
+                        </div>
+
+                        <div class="purpose-check">
+                            ✓
+                        </div>
+
+                    </button>
+
+
+
+                    <!-- ADDRESS -->
+
+                    <button class="purpose-option" data-purpose="address">
+
+                        <div class="purpose-icon cyan">
+                            📍
+                        </div>
+
+                        <div class="purpose-info">
+
+                            <strong>
+                                Address Verification
+                            </strong>
+
+                            <span>
+                                Verify your residence
+                                or delivery address
+                            </span>
+
+                        </div>
+
+                        <div class="purpose-check">
+                            ✓
+                        </div>
+
+                    </button>
+
+
+
+                    <!-- BANK -->
+
+                    <button class="purpose-option" data-purpose="bank">
+
+                        <div class="purpose-icon green">
+                            🏦
+                        </div>
+
+                        <div class="purpose-info">
+
+                            <strong>
+                                Bank Verification
+                            </strong>
+
+                            <span>
+                                Payment, account or
+                                banking verification
+                            </span>
+
+                        </div>
+
+                        <div class="purpose-check">
+                            ✓
+                        </div>
+
+                    </button>
+
+
+
+                    <!-- COLLEGE -->
+
+                    <button class="purpose-option" data-purpose="college">
+
+                        <div class="purpose-icon orange">
+                            🎓
+                        </div>
+
+                        <div class="purpose-info">
+
+                            <strong>
+                                College Admission
+                            </strong>
+
+                            <span>
+                                Admission, student
+                                verification or documents
+                            </span>
+
+                        </div>
+
+                        <div class="purpose-check">
+                            ✓
+                        </div>
+
+                    </button>
+
+
+
+                    <!-- GENERAL -->
+
+                    <button class="purpose-option" data-purpose="general">
+
+                        <div class="purpose-icon violet">
+                            📤
+                        </div>
+
+                        <div class="purpose-info">
+
+                            <strong>
+                                General Sharing
+                            </strong>
+
+                            <span>
+                                Sharing information with
+                                another person
+                            </span>
+
+                        </div>
+
+                        <div class="purpose-check">
+                            ✓
+                        </div>
+
+                    </button>
+
+
+
+                    <!-- PUBLIC -->
+
+                    <button class="purpose-option public-purpose" data-purpose="public">
+
+                        <div class="purpose-icon red">
+                            🌐
+                        </div>
+
+                        <div class="purpose-info">
+
+                            <strong>
+                                Public Posting
+                            </strong>
+
+                            <span>
+                                Social media, websites
+                                or public platforms
+                            </span>
+
+                        </div>
+
+                        <div class="purpose-check">
+                            ✓
+                        </div>
+
+                    </button>
+
+
+
+                    <!-- CUSTOM -->
+
+                    <button class="purpose-option" data-purpose="custom">
+
+                        <div class="purpose-icon gray">
+                            ✦
+                        </div>
+
+                        <div class="purpose-info">
+
+                            <strong>
+                                Other Purpose
+                            </strong>
+
+                            <span>
+                                I have another reason
+                                for sharing
+                            </span>
+
+                        </div>
+
+                        <div class="purpose-check">
+                            ✓
+                        </div>
+
+                    </button>
+
+                </div>
+
+
+
+                <!-- =================================================
+                 RECOMMENDATION
+            ================================================== -->
+
+                <div class="recommendation-box" id="recommendationBox">
+
+                    <div class="recommendation-header">
+
+                        <div class="recommendation-icon">
+                            ✦
+                        </div>
+
+                        <div>
+
+                            <strong>
+                                Purpose-aware protection
+                            </strong>
+
+                            <span>
+                                Select a purpose to see what
+                                PrivacyGuard recommends.
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="recommendation-content" id="recommendationContent">
+
+                        <div class="empty-recommendation">
+
+                            <div class="empty-icon">
+                                🎯
+                            </div>
+
+                            <div>
+
+                                <strong>
+                                    Choose your purpose
+                                </strong>
+
+                                <span>
+                                    We'll identify the minimum
+                                    information required.
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- =================================================
+                 SELECTED PURPOSE
+            ================================================== -->
+
+                <div class="selected-purpose" id="selectedPurpose">
+
+                    <span>
+                        Selected:
+                    </span>
+
+                    <strong id="selectedPurposeText">
+                        None
+                    </strong>
+
+                </div>
+
+
+
+                <!-- =================================================
+                 ACTIONS
+            ================================================== -->
+
+                <div class="purpose-actions">
+
+                    <a href="../html/result.html" class="page-back-btn">
+                        Back to Results
+                    </a>
+
+
+                    <button class="primary-btn" id="continueProtectBtn" disabled>
+
+                        Continue to Protect
+
+                    </button>
+
+                </div>
+
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+         RIGHT 3D VISUAL
+    ================================================== -->
+
+        <aside class="visual-panel">
+
+            <div class="visual-glow"></div>
+
+
+            <div class="visual-note">
+
+                Need it?<br>
+                Keep it.<br>
+                Don't need it?<br>
+                Protect it.
+
+
+            </div>
+
+
+            <!-- FLOATING CARD -->
+
+            <div class="floating-purpose-card">
+
+                <div class="floating-card-top">
+
+                    <span>
+                        PURPOSE
+                    </span>
+
+                    <span class="live-dot">
+                        ●
+                    </span>
+
+                </div>
+
+
+                <div class="floating-card-title">
+
+                    Job Application
+
+                </div>
+
+
+                <div class="mini-data-row">
+
+                    <span class="mini-icon">
+                        ✓
+                    </span>
+
+                    <span>
+                        Name
+                    </span>
+
+                    <b>
+                        KEEP
+                    </b>
+
+                </div>
+
+
+                <div class="mini-data-row">
+
+                    <span class="mini-icon protected">
+                        🔒
+                    </span>
+
+                    <span>
+                        Aadhaar
+                    </span>
+
+                    <b class="protect">
+                        PROTECT
+                    </b>
+
+                </div>
+
+
+                <div class="mini-data-row">
+
+                    <span class="mini-icon protected">
+                        🔒
+                    </span>
+
+                    <span>
+                        Bank Data
+                    </span>
+
+                    <b class="protect">
+                        PROTECT
+                    </b>
+
+                </div>
+
+            </div>
+
+
+            <!-- 3D SHIELD -->
+
+            <div class="purpose-shield">
+
+                <div class="shield-ring ring-one"></div>
+
+                <div class="shield-ring ring-two"></div>
+
+
+                <div class="shield-body">
+
+                    <svg viewBox="0 0 180 205" fill="none">
+
+                        <defs>
+
+                            <linearGradient id="shieldGradient" x1="20" y1="10" x2="160" y2="190">
+
+                                <stop stop-color="#7385FF" />
+
+                                <stop offset=".5" stop-color="#4559ED" />
+
+                                <stop offset="1" stop-color="#2411B8" />
+
+                            </linearGradient>
+
+                        </defs>
+
+
+                        <path d="M90 5L164 32V88C164 138 133 176 90 199C47 176 16 138 16 88V32L90 5Z"
+                            fill="url(#shieldGradient)" stroke="#8F9AFF" stroke-width="2" />
+
+
+                        <path d="M90 22L147 43V87C147 124 124 153 90 173C56 153 33 124 33 87V43L90 22Z"
+                            fill="rgba(255,255,255,.08)" stroke="rgba(255,255,255,.40)" stroke-width="2" />
+
+
+                        <rect x="62" y="82" width="56" height="47" rx="10" fill="rgba(255,255,255,.92)" />
+
+
+                        <path d="M73 82V68C73 58 80 51 90 51C100 51 107 58 107 68V82" stroke="white" stroke-width="9"
+                            stroke-linecap="round" />
+
+
+                        <circle cx="90" cy="104" r="6" fill="#4B5CF0" />
+
+
+                        <path d="M90 110V119" stroke="#4B5CF0" stroke-width="5" stroke-linecap="round" />
+
+                    </svg>
+
+                </div>
+
+            </div>
+
+
+            <!-- FLOATING SPHERES -->
+
+            <div class="sphere sphere-one"></div>
+
+            <div class="sphere sphere-two"></div>
+
+            <div class="sphere sphere-three"></div>
+
+
+            <div class="visual-bottom-note">
+
+                Share only<br>
+                what you need
+
+
+            </div>
+
+        </aside>
+
+    </main>
+
+
+    <!-- TOAST -->
+
+    <div class="toast-container" id="toastContainer"></div>
+
+
+    <script src="../js/purpose.js"></script>
+
+</body>
+
+</html>

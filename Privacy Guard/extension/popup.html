@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PrivacyGuard</title>
+    <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+    <div class="popup-container">
+        <!-- TOPBAR -->
+        <header class="popup-header">
+            <div class="brand-group">
+                <div class="brand-icon">
+                    <svg viewBox="0 0 64 72" fill="none" width="22" height="24">
+                        <defs>
+                            <linearGradient id="brandGradient" x1="10" y1="5" x2="55" y2="68">
+                                <stop stop-color="#6677FF" />
+                                <stop offset="1" stop-color="#3215D8" />
+                            </linearGradient>
+                        </defs>
+                        <path d="M32 3L57 12V31C57 48 47 61 32 69C17 61 7 48 7 31V12L32 3Z" fill="url(#brandGradient)" stroke="#4131EF" stroke-width="2.5" />
+                        <path d="M32 14L47 19V31C47 41 42 50 32 56V14Z" fill="rgba(255,255,255,.9)" />
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="brand-title">PrivacyGuard</h1>
+                    <p class="brand-tagline">Share Smart. Stay Private.</p>
+                </div>
+            </div>
+            <div class="status-pill" id="backendStatusPill">
+                <span class="status-dot" id="backendStatusDot"></span>
+                <span class="status-text" id="backendStatusText">Checking...</span>
+            </div>
+        </header>
+
+        <!-- OFFLINE WARNING BANNER -->
+        <div class="offline-banner" id="offlineBanner" style="display: none;">
+            <span class="offline-icon">⚠️</span>
+            <div class="offline-content">
+                <strong>Backend Offline</strong>
+                <p>Start local server at <code>http://127.0.0.1:8000</code></p>
+            </div>
+            <button class="btn-sm" id="retryBackendBtn">Retry</button>
+        </div>
+
+        <!-- MAIN SCAN CARD -->
+        <main class="popup-body">
+            <!-- PAGE STATUS STRIP -->
+            <div class="action-strip">
+                <button class="btn-primary" id="scanPageBtn">
+                    🔍 Scan Active Page
+                </button>
+            </div>
+
+            <!-- SCAN LOADER -->
+            <div class="scan-loading" id="scanLoading" style="display: none;">
+                <div class="spinner"></div>
+                <span>Scanning webpage with local engine...</span>
+            </div>
+
+            <!-- SCAN SUMMARY RESULTS -->
+            <div class="results-section" id="resultsSection" style="display: none;">
+                <div class="risk-card" id="riskCard">
+                    <div class="risk-header">
+                        <div>
+                            <span class="risk-label">Exposure Risk</span>
+                            <h3 class="risk-score-text" id="riskScoreText">95 / 100</h3>
+                        </div>
+                        <span class="risk-badge" id="riskBadge">HIGH RISK</span>
+                    </div>
+                    <div class="detected-count-strip">
+                        <span id="detectedCountLabel">7 sensitive items detected</span>
+                    </div>
+                </div>
+
+                <!-- PURPOSE SELECTION -->
+                <div class="purpose-section">
+                    <label class="field-label" for="purposeSelect">🎯 Sharing Purpose (Minimization Policy):</label>
+                    <select id="purposeSelect" class="form-select">
+                        <option value="expense_reimbursement" selected>🧾 Expense Reimbursement</option>
+                        <option value="bank_verification">🏦 Bank Verification</option>
+                        <option value="loan_application">💳 Loan Application</option>
+                        <option value="job_application">💼 Job Application</option>
+                        <option value="general_sharing">💬 General Sharing</option>
+                        <option value="public_posting">🌐 Public Posting</option>
+                    </select>
+                </div>
+
+                <!-- POLICY BREAKDOWN GRID -->
+                <div class="policy-breakdown">
+                    <div class="policy-column">
+                        <div class="policy-title keep-title">✓ KEEP (Necessary)</div>
+                        <div class="tag-list" id="keepTags"></div>
+                    </div>
+                    <div class="policy-column">
+                        <div class="policy-title protect-title">🔒 PROTECT (Redact)</div>
+                        <div class="tag-list" id="protectTags"></div>
+                    </div>
+                </div>
+
+                <!-- ACTION BUTTONS -->
+                <div class="protect-action-wrap">
+                    <button class="btn-protect" id="applyProtectBtn">
+                        🛡️ Protect Sensitive Data
+                    </button>
+                </div>
+            </div>
+
+            <!-- PROTECTED OUTPUT VIEW -->
+            <div class="protected-section" id="protectedSection" style="display: none;">
+                <div class="success-badge-strip">
+                    <span>✓ Data Minimized &amp; Protected</span>
+                    <span class="reduction-pill" id="exposureReductionPill">-73.7% Exposure</span>
+                </div>
+
+                <div class="receipt-strip" id="receiptStrip">
+                    <span>🧾 Receipt:</span>
+                    <code id="receiptHashShort" title="Full SHA-256 Hash">--</code>
+                </div>
+
+                <label class="field-label" for="protectedTextPreview">Safe Text Preview:</label>
+                <textarea id="protectedTextPreview" class="text-preview" rows="5" readonly></textarea>
+
+                <div class="dual-actions">
+                    <button class="btn-secondary" id="copySafeTextBtn">
+                        📋 Copy Safe Text
+                    </button>
+                    <button class="btn-primary" id="replaceOnPageBtn">
+                        ⚡ Replace on Webpage
+                    </button>
+                </div>
+            </div>
+
+            <!-- EMPTY / CLEAN STATE -->
+            <div class="empty-state" id="emptyState">
+                <div class="empty-shield">🛡️</div>
+                <p>Click <strong>"Scan Active Page"</strong> to inspect emails, form fields, and text before sending.</p>
+                <button class="btn-link" id="loadSampleBtn">Load Sample Uber Receipt</button>
+            </div>
+        </main>
+
+        <!-- TOAST MESSAGE -->
+        <div class="popup-toast" id="popupToast" style="display: none;"></div>
+    </div>
+    <script src="popup.js"></script>
+</body>
+</html>

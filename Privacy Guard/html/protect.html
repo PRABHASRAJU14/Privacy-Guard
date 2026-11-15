@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>PrivacyGuard — Protect</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600;700&family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <script src="../js/theme.js"></script>
+    <link rel="stylesheet" href="../css/protect.css">
+    <link rel="stylesheet" href="../css/theme.css">
+</head>
+
+<body>
+
+    <canvas id="ambientCanvas"></canvas>
+
+    <div class="bg-orb bg-orb-one orb-one"></div>
+    <div class="bg-orb bg-orb-two orb-two"></div>
+    <div class="bg-orb bg-orb-three orb-three"></div>
+    <div class="bg-orb bg-orb-four orb-four"></div>
+
+
+    <!-- =====================================================
+     HEADER
+===================================================== -->
+
+    <header class="topbar">
+
+        <a href="../html/landing.html" class="brand">
+
+            <div class="brand-shield">
+
+                <svg viewBox="0 0 64 72" fill="none">
+
+                    <defs>
+                        <linearGradient id="brandGradient" x1="10" y1="5" x2="55" y2="68">
+                            <stop stop-color="#687AFF" />
+                            <stop offset="1" stop-color="#3215D8" />
+                        </linearGradient>
+                    </defs>
+
+                    <path d="M32 3L57 12V31C57 48 47 61 32 69C17 61 7 48 7 31V12L32 3Z" fill="url(#brandGradient)"
+                        stroke="#4131EF" stroke-width="3" />
+
+                    <path d="M32 14L47 19V31C47 41 42 50 32 56V14Z" fill="rgba(255,255,255,.88)" />
+
+                </svg>
+
+            </div>
+
+            <span>PrivacyGuard</span>
+
+        </a>
+
+
+    </header>
+
+
+
+    <!-- =====================================================
+     MAIN
+===================================================== -->
+
+    <main class="protect-layout">
+
+
+        <!-- =================================================
+         SIDEBAR
+    ================================================== -->
+
+        <aside class="progress-sidebar">
+
+            <div class="progress-line"></div>
+
+
+            <div class="progress-step completed">
+
+                <div class="step-circle">✓</div>
+
+                <div class="step-content">
+
+                    <strong>Scan</strong>
+
+                    <span>
+                        Upload or paste<br>
+                        your data
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <div class="progress-step completed">
+
+                <div class="step-circle">✓</div>
+
+                <div class="step-content">
+
+                    <strong>Results</strong>
+
+                    <span>
+                        View detected<br>
+                        information
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <div class="progress-step completed">
+
+                <div class="step-circle">✓</div>
+
+                <div class="step-content">
+
+                    <strong>Purpose</strong>
+
+                    <span>
+                        Tell us why you're<br>
+                        sharing
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <div class="progress-step active">
+
+                <div class="step-circle">4</div>
+
+                <div class="step-content">
+
+                    <strong>Protect</strong>
+
+                    <span>
+                        Choose what to<br>
+                        keep or mask
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <div class="progress-step">
+
+                <div class="step-circle">5</div>
+
+                <div class="step-content">
+
+                    <strong>Share</strong>
+
+                    <span>
+                        Get your<br>
+                        safe version
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <div class="sidebar-note">
+                Your<br>
+                Privacy<br>
+                Our Priority
+            </div>
+
+        </aside>
+
+
+
+        <!-- =================================================
+         CENTER
+    ================================================== -->
+
+        <section class="protect-content">
+
+            <div class="protect-card">
+
+
+                <!-- HEADER -->
+
+                <div class="page-header">
+
+                    <div>
+
+                        <div class="step-badge">
+                            ✦ STEP 4 OF 5
+                        </div>
+
+                        <h1>
+                            Protect your
+                            <span>information</span>
+                        </h1>
+
+                        <p>
+                            Review each detected item and choose what
+                            to keep visible and what to protect (mask).
+                        </p>
+
+                    </div>
+
+
+                    <div class="privacy-active">
+
+                        <span></span>
+
+                        Privacy layer active
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- =================================================
+                 SUMMARY CARDS
+            ================================================== -->
+
+                <div class="summary-grid">
+
+
+                    <!-- SCORE -->
+
+                    <div class="summary-card">
+
+                        <div class="summary-icon score-icon">
+                            🛡
+                        </div>
+
+                        <div class="summary-info">
+
+                            <span class="summary-label">
+                                Privacy Score
+                            </span>
+
+                            <strong id="privacyScore">
+                                72 / 100
+                            </strong>
+
+                            <div class="score-track">
+                                <div class="score-fill" id="scoreFill"></div>
+                            </div>
+
+                            <small id="scoreMessage">
+                                Good! You're sharing safely.
+                            </small>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- PURPOSE -->
+
+                    <div class="summary-card">
+
+                        <div class="summary-icon purpose-icon">
+                            💼
+                        </div>
+
+                        <div class="summary-info">
+
+                            <span class="summary-label">
+                                Your Purpose
+                            </span>
+
+                            <strong id="purposeName">
+                                Job Application
+                            </strong>
+
+                            <small>
+                                <span class="green-dot">●</span>
+                                Recommended protection applied
+                            </small>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- =================================================
+                 DETECTED INFORMATION TABLE
+            ================================================== -->
+
+                <div class="data-panel">
+
+                    <div class="data-header">
+
+                        <span>
+                            Detected Information
+                        </span>
+
+                        <span class="keep-heading">
+                            Keep Visible
+                        </span>
+
+                        <span class="protect-heading">
+                            Protect (Mask)
+                        </span>
+
+                        <span></span>
+
+                    </div>
+
+
+                    <div id="dataRows"></div>
+
+                </div>
+
+
+
+                <!-- INFO MESSAGE -->
+
+                <div class="info-message">
+
+                    <span>ⓘ</span>
+
+                    Items marked as
+                    <strong>"Mask"</strong>
+                    will be securely protected in your shared file.
+
+                </div>
+
+
+
+                <!-- =================================================
+                 ACTIONS
+            ================================================== -->
+
+                <div class="action-row">
+
+                    <a href="../html/purpose.html" class="page-back-btn">
+                        Back to Purpose
+                    </a>
+
+
+                    <button class="preview-btn" id="previewBtn">
+                        👁
+                        Protect & Preview
+                    </button>
+
+
+                    <button class="continue-btn" id="continueBtn">
+                        Continue to Share
+                    </button>
+
+                </div>
+
+
+                <div class="privacy-footnote">
+
+                    🔒 Your choices are applied before anything is shared.
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+         RIGHT VISUAL
+    ================================================== -->
+
+        <aside class="visual-panel">
+
+            <div class="visual-glow"></div>
+
+
+            <div class="visual-note">
+
+                We protect<br>
+                what matters.
+
+
+            </div>
+
+
+
+            <!-- SAFE SUMMARY -->
+
+            <div class="safe-summary">
+
+                <div class="safe-summary-title">
+
+                    <span class="small-shield">
+                        🛡
+                    </span>
+
+                    Your Safe Summary
+
+                </div>
+
+
+                <div class="safe-row">
+
+                    <span>Total items detected</span>
+
+                    <strong id="totalItems">
+                        8
+                    </strong>
+
+                </div>
+
+
+                <div class="safe-row">
+
+                    <span>You're keeping</span>
+
+                    <strong class="green" id="keepCount">
+                        3
+                    </strong>
+
+                </div>
+
+
+                <div class="safe-row">
+
+                    <span>You're protecting</span>
+
+                    <strong class="red" id="protectCount">
+                        5
+                    </strong>
+
+                </div>
+
+
+                <div class="safe-score">
+
+                    <span>
+                        Privacy Score
+                    </span>
+
+                    <strong id="sideScore">
+                        72 / 100
+                    </strong>
+
+                    <div class="side-score-track">
+
+                        <div id="sideScoreFill"></div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- 3D SHIELD -->
+
+            <div class="shield-wrapper">
+
+                <div class="shield-orbit orbit-one"></div>
+
+                <div class="shield-orbit orbit-two"></div>
+
+
+                <div class="shield">
+
+                    <svg viewBox="0 0 220 250" fill="none">
+
+                        <defs>
+
+                            <linearGradient id="shieldGradient" x1="20" y1="10" x2="200" y2="230">
+
+                                <stop stop-color="#7284FF" />
+
+                                <stop offset=".48" stop-color="#455AF0" />
+
+                                <stop offset="1" stop-color="#2411B8" />
+
+                            </linearGradient>
+
+                        </defs>
+
+
+                        <path d="M110 5L199 38V105C199 165 160 211 110 240C60 211 21 165 21 105V38L110 5Z"
+                            fill="url(#shieldGradient)" stroke="#9DA8FF" stroke-width="2" />
+
+
+                        <path d="M110 25L179 50V103C179 149 151 184 110 208C69 184 41 149 41 103V50L110 25Z"
+                            fill="rgba(255,255,255,.08)" stroke="rgba(255,255,255,.38)" stroke-width="2" />
+
+
+                        <!-- Lock -->
+
+                        <rect x="72" y="103" width="76" height="61" rx="12" fill="rgba(255,255,255,.94)" />
+
+
+                        <path d="M87 103V84C87 71 97 61 110 61C123 61 133 71 133 84V103" stroke="white"
+                            stroke-width="11" stroke-linecap="round" />
+
+
+                        <circle cx="110" cy="130" r="8" fill="#465AF0" />
+
+
+                        <path d="M110 138V150" stroke="#465AF0" stroke-width="6" stroke-linecap="round" />
+
+                    </svg>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- FLOATING ICONS -->
+
+            <div class="floating-icon icon-document">
+                ☷
+            </div>
+
+            <div class="floating-icon icon-user">
+                👤
+            </div>
+
+            <div class="floating-icon icon-fingerprint">
+                ◉
+            </div>
+
+            <div class="floating-icon icon-cloud">
+                ☁
+            </div>
+
+
+            <!-- SPHERES -->
+
+            <div class="sphere sphere-one"></div>
+
+            <div class="sphere sphere-two"></div>
+
+            <div class="sphere sphere-three"></div>
+
+
+            <div class="visual-bottom-note">
+
+                Share confidently.
+
+
+            </div>
+
+        </aside>
+
+    </main>
+
+
+
+    <!-- =====================================================
+     TOAST
+===================================================== -->
+
+    <div class="toast-container" id="toastContainer"></div>
+
+
+    <script src="../js/protect.js"></script>
+
+</body>
+
+</html>

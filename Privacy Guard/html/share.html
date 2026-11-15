@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>PrivacyGuard — Safe Share</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600;700&family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <script src="../js/theme.js"></script>
+    <link rel="stylesheet" href="../css/share.css">
+    <link rel="stylesheet" href="../css/theme.css">
+</head>
+
+<body>
+
+    <canvas id="ambientCanvas"></canvas>
+
+    <div class="bg-orb bg-orb-one orb-one"></div>
+    <div class="bg-orb bg-orb-two orb-two"></div>
+    <div class="bg-orb bg-orb-three orb-three"></div>
+    <div class="bg-orb bg-orb-four orb-four"></div>
+
+
+    <!-- HEADER -->
+
+    <header class="topbar">
+
+        <a href="../html/landing.html" class="brand">
+
+            <div class="brand-shield">
+
+                <svg viewBox="0 0 64 72" fill="none">
+
+                    <defs>
+                        <linearGradient id="brandGradient" x1="10" y1="5" x2="55" y2="68">
+                            <stop stop-color="#687AFF" />
+                            <stop offset="1" stop-color="#3215D8" />
+                        </linearGradient>
+                    </defs>
+
+                    <path d="M32 3L57 12V31C57 48 47 61 32 69C17 61 7 48 7 31V12L32 3Z" fill="url(#brandGradient)"
+                        stroke="#4131EF" stroke-width="3" />
+
+                    <path d="M32 14L47 19V31C47 41 42 50 32 56V14Z" fill="rgba(255,255,255,.9)" />
+
+                </svg>
+
+            </div>
+
+            <span>PrivacyGuard</span>
+
+        </a>
+
+
+    </header>
+
+
+
+    <!-- MAIN -->
+
+    <main class="share-layout">
+
+
+        <!-- SIDEBAR -->
+
+        <aside class="progress-sidebar">
+
+            <div class="progress-line"></div>
+
+
+            <div class="progress-step completed">
+
+                <div class="step-circle">✓</div>
+
+                <div class="step-content">
+                    <strong>Scan</strong>
+                    <span>Upload or paste<br>your data</span>
+                </div>
+
+            </div>
+
+
+            <div class="progress-step completed">
+
+                <div class="step-circle">✓</div>
+
+                <div class="step-content">
+                    <strong>Results</strong>
+                    <span>View detected<br>information</span>
+                </div>
+
+            </div>
+
+
+            <div class="progress-step completed">
+
+                <div class="step-circle">✓</div>
+
+                <div class="step-content">
+                    <strong>Purpose</strong>
+                    <span>Tell us why you're<br>sharing</span>
+                </div>
+
+            </div>
+
+
+            <div class="progress-step completed">
+
+                <div class="step-circle">✓</div>
+
+                <div class="step-content">
+                    <strong>Protect</strong>
+                    <span>Choose what to<br>keep or mask</span>
+                </div>
+
+            </div>
+
+
+            <div class="progress-step active">
+
+                <div class="step-circle">5</div>
+
+                <div class="step-content">
+                    <strong>Share</strong>
+                    <span>Get your<br>safe version</span>
+                </div>
+
+            </div>
+
+
+            <div class="sidebar-note">
+                Your<br>
+                Privacy<br>
+                Our Priority
+            </div>
+
+        </aside>
+
+
+
+        <!-- CENTER -->
+
+        <section class="share-content">
+
+            <div class="share-card">
+
+
+                <!-- HEADER -->
+
+                <div class="page-header">
+
+                    <div>
+
+                        <div class="step-badge">
+                            ✦ STEP 5 OF 5
+                        </div>
+
+                        <h1>
+                            You're ready to
+                            <span>share safely.</span>
+                        </h1>
+
+                        <p>
+                            PrivacyGuard has protected the information
+                            you don't need to share.
+                        </p>
+
+                    </div>
+
+
+                    <div class="safe-status">
+
+                        <span></span>
+
+                        Safe to Share
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- SUCCESS BANNER -->
+
+                <div class="success-banner">
+
+                    <div class="success-icon">
+                        ✓
+                    </div>
+
+                    <div>
+
+                        <strong>
+                            Your data is protected
+                        </strong>
+
+                        <span>
+                            Sensitive information has been masked
+                            according to your selected purpose.
+                        </span>
+
+                    </div>
+
+                    <div class="success-score">
+
+                        <small>Privacy Score</small>
+
+                        <strong id="privacyScore">
+                            94 / 100
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- BEFORE / AFTER -->
+
+                <div class="preview-title">
+
+                    <span>Protected Preview</span>
+
+                    <small>
+                        Before / After
+                    </small>
+
+                </div>
+
+
+                <div class="preview-grid">
+
+
+                    <!-- BEFORE -->
+
+                    <div class="preview-box">
+
+                        <div class="preview-header">
+
+                            <div>
+                                <span class="preview-dot red-dot"></span>
+                                Original
+                            </div>
+
+                            <span class="unsafe-label">
+                                Sensitive
+                            </span>
+
+                        </div>
+
+
+                        <div class="message-content">
+
+                            <p>
+                                Hello Sir,
+                            </p>
+
+                            <p>
+                                My name is
+                                <strong>Rahul Sharma</strong>.
+                            </p>
+
+                            <p>
+                                My Aadhaar number is
+                                <mark class="danger">
+                                    4567 8912 3456
+                                </mark>
+                            </p>
+
+                            <p>
+                                My phone number is
+                                <mark class="danger">
+                                    9876543210
+                                </mark>
+                            </p>
+
+                            <p>
+                                Please find my application attached.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- AFTER -->
+
+                    <div class="preview-box safe-preview">
+
+                        <div class="preview-header">
+
+                            <div>
+                                <span class="preview-dot green-dot"></span>
+                                Protected
+                            </div>
+
+                            <span class="safe-label">
+                                Safe ✓
+                            </span>
+
+                        </div>
+
+
+                        <div class="message-content">
+
+                            <p>
+                                Hello Sir,
+                            </p>
+
+                            <p>
+                                My name is
+                                <strong>Rahul Sharma</strong>.
+                            </p>
+
+                            <p>
+                                My Aadhaar number is
+                                <mark class="masked-value">
+                                    4567 •••• 3456
+                                </mark>
+                            </p>
+
+                            <p>
+                                My phone number is
+                                <mark class="masked-value">
+                                    ••••••••10
+                                </mark>
+                            </p>
+
+                            <p>
+                                Please find my application attached.
+                            </p>
+
+                        </div>
+
+                        <div class="protected-stamp">
+                            🛡 Protected by PrivacyGuard
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- PROTECTION SUMMARY -->
+
+                <div class="protection-summary">
+
+                    <div class="summary-title">
+
+                        <span class="summary-shield">
+                            🛡
+                        </span>
+
+                        Protection Summary
+
+                    </div>
+
+
+                    <div class="summary-items">
+
+                        <div class="summary-item">
+
+                            <span class="check">✓</span>
+
+                            <div>
+                                <strong id="keptCount">3</strong>
+                                <small>Items kept</small>
+                            </div>
+
+                        </div>
+
+
+                        <div class="summary-item">
+
+                            <span class="lock">🔒</span>
+
+                            <div>
+                                <strong id="maskedCount">5</strong>
+                                <small>Items masked</small>
+                            </div>
+
+                        </div>
+
+
+                        <div class="summary-item">
+
+                            <span class="shield-small">🛡</span>
+
+                            <div>
+                                <strong id="exposureReductionStat">78%</strong>
+                                <small>Exposure Reduced</small>
+                            </div>
+
+                        </div>
+
+
+                        <div class="summary-item">
+
+                            <span class="purpose-small">◎</span>
+
+                            <div>
+                                <strong id="purposeName">
+                                    Expense Reimbursement
+                                </strong>
+
+                                <small>
+                                    Selected purpose
+                                </small>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- CRYPTOGRAPHIC INTEGRITY RECEIPT -->
+                <div class="protection-receipt-bar" id="protectionReceiptBar" style="display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 20px 0; padding: 12px 18px; border-radius: 12px; background: rgba(34, 197, 94, 0.08); border: 1px solid rgba(34, 197, 94, 0.25); font-family: monospace; font-size: 0.82rem;">
+                    <div style="display: flex; align-items: center; gap: 10px; overflow: hidden;">
+                        <span style="font-size: 1.25rem;">🧾</span>
+                        <div style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                            <strong style="color: #22c55e; font-family: 'Plus Jakarta Sans', sans-serif; display: block; font-size: 0.85rem;">Cryptographic Audit Receipt (SHA-256)</strong>
+                            <span id="receiptHashDisplay" style="color: var(--muted, #94a3b8); font-size: 0.78rem;">Generating integrity seal...</span>
+                        </div>
+                    </div>
+                    <span style="padding: 4px 10px; border-radius: 20px; font-size: 0.72rem; background: rgba(34, 197, 94, 0.18); color: #22c55e; font-weight: 700; white-space: nowrap;">✓ INTEGRITY SEALED</span>
+                </div>
+
+
+
+                <!-- ACTIONS -->
+
+                <div class="share-actions">
+
+                    <button class="copy-btn" id="copyBtn">
+                        ⧉
+                        Copy Safe Version
+                    </button>
+
+
+                    <button class="download-btn" id="downloadBtn">
+                        Download Safe Version
+                    </button>
+
+
+                    <button class="share-btn" id="shareBtn">
+                        🛡
+                        Share Safely
+                    </button>
+
+                </div>
+
+
+                <div class="privacy-footnote">
+
+                    🔒 Your original sensitive information remains protected.
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- RIGHT VISUAL -->
+
+        <aside class="visual-panel">
+
+            <div class="visual-glow"></div>
+
+
+            <div class="visual-note">
+
+                Safe to<br>
+                share!
+
+
+            </div>
+
+
+
+            <!-- FLOATING SUCCESS CARD -->
+
+            <div class="success-card">
+
+                <div class="success-card-top">
+
+                    <span class="success-card-icon">
+                        ✓
+                    </span>
+
+                    <div>
+
+                        <strong>
+                            Protection Complete
+                        </strong>
+
+                        <small>
+                            PrivacyGuard verified
+                        </small>
+
+                    </div>
+
+                </div>
+
+
+                <div class="risk-meter">
+
+                    <div class="meter-label">
+
+                        <span>Exposure Risk</span>
+
+                        <strong>LOW</strong>
+
+                    </div>
+
+                    <div class="meter-track">
+
+                        <div class="meter-fill"></div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- 3D SHIELD -->
+
+            <div class="shield-wrapper">
+
+                <div class="orbit orbit-one"></div>
+                <div class="orbit orbit-two"></div>
+
+
+                <div class="shield">
+
+                    <svg viewBox="0 0 220 250" fill="none">
+
+                        <defs>
+
+                            <linearGradient id="shieldGradient" x1="20" y1="10" x2="200" y2="230">
+
+                                <stop stop-color="#7284FF" />
+                                <stop offset=".48" stop-color="#455AF0" />
+                                <stop offset="1" stop-color="#2411B8" />
+
+                            </linearGradient>
+
+                        </defs>
+
+
+                        <path d="M110 5L199 38V105C199 165 160 211 110 240C60 211 21 165 21 105V38L110 5Z"
+                            fill="url(#shieldGradient)" stroke="#AAB3FF" stroke-width="2" />
+
+
+                        <path d="M110 25L179 50V103C179 149 151 184 110 208C69 184 41 149 41 103V50L110 25Z"
+                            fill="rgba(255,255,255,.08)" stroke="rgba(255,255,255,.38)" stroke-width="2" />
+
+
+                        <!-- CHECK -->
+
+                        <circle cx="110" cy="128" r="38" fill="rgba(255,255,255,.95)" />
+
+                        <path d="M91 128L104 141L132 111" stroke="#4055E8" stroke-width="8" stroke-linecap="round"
+                            stroke-linejoin="round" />
+
+                    </svg>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- FLOATING ICONS -->
+
+            <div class="floating-icon icon-one">
+                ✓
+            </div>
+
+            <div class="floating-icon icon-two">
+                🔒
+            </div>
+
+            <div class="floating-icon icon-three">
+                ◉
+            </div>
+
+
+            <!-- SPHERES -->
+
+            <div class="sphere sphere-one"></div>
+            <div class="sphere sphere-two"></div>
+            <div class="sphere sphere-three"></div>
+
+
+            <div class="visual-bottom-note">
+
+                Share with confidence.
+
+
+            </div>
+
+        </aside>
+
+    </main>
+
+
+    <!-- TOAST -->
+
+    <div class="toast-container" id="toastContainer"></div>
+
+
+    <script src="../js/share.js"></script>
+
+</body>
+
+</html>

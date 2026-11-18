@@ -32,6 +32,10 @@ backend/uploads/*
 backend/protected/*
 !backend/protected/.gitkeep
 
+# Runtime Domain Logs
+logs/*.log
+!logs/.gitkeep
+
 # OS / Editor Files
 .DS_Store
 Thumbs.db

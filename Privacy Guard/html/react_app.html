@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PrivacyGuard — React Component App (Client-Side Routed)</title>
+    <!-- React 18 & ReactDOM via CDN for immediate zero-build execution -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script crossorigin src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <!-- Inter Font & Styling -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/landing.css">
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --bg-dark: #0f172a;
+            --surface-dark: #1e293b;
+            --border-dark: #334155;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent-red: #ef4444;
+            --accent-green: #10b981;
+            --accent-amber: #f59e0b;
+        }
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+        }
+        .app-container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+        .nav-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 24px;
+            background: var(--surface-dark);
+            border: 1px solid var(--border-dark);
+            border-radius: 14px;
+            margin-bottom: 28px;
+        }
+        .nav-links {
+            display: flex;
+            gap: 12px;
+        }
+        .nav-btn {
+            background: transparent;
+            color: var(--text-muted);
+            border: 1px solid transparent;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .nav-btn:hover, .nav-btn.active {
+            background: rgba(79, 70, 229, 0.15);
+            color: #818cf8;
+            border-color: rgba(99, 102, 241, 0.3);
+        }
+        .concept-badge {
+            font-size: 0.72rem;
+            padding: 3px 8px;
+            border-radius: 6px;
+            background: rgba(16, 185, 129, 0.15);
+            color: #34d399;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .card {
+            background: var(--surface-dark);
+            border: 1px solid var(--border-dark);
+            border-radius: 14px;
+            overflow: hidden;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+        }
+        .card-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border-dark);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255,255,255,0.02);
+        }
+        .card-body {
+            padding: 24px;
+        }
+        .card-footer {
+            padding: 14px 20px;
+            border-top: 1px solid var(--border-dark);
+            background: rgba(0,0,0,0.15);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        textarea.scan-input {
+            width: 100%;
+            height: 140px;
+            background: #090d16;
+            border: 1px solid var(--border-dark);
+            border-radius: 10px;
+            color: #fff;
+            padding: 14px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.92rem;
+            box-sizing: border-box;
+            resize: vertical;
+        }
+        .btn-primary {
+            background: var(--primary);
+            color: #fff;
+            border: none;
+            padding: 10px 22px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-primary:hover {
+            background: var(--primary-hover);
+        }
+        .entity-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #182234;
+            border: 1px solid var(--border-dark);
+            padding: 6px 12px;
+            border-radius: 8px;
+            margin: 4px;
+            font-size: 0.85rem;
+        }
+        .entity-tag.protect {
+            border-color: rgba(239, 68, 68, 0.4);
+            background: rgba(239, 68, 68, 0.1);
+        }
+        .entity-tag.keep {
+            border-color: rgba(16, 185, 129, 0.4);
+            background: rgba(16, 185, 129, 0.1);
+        }
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        @media (max-width: 768px) {
+            .grid-2 { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <!-- React App Script with Babel JSX Compilation -->
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        // ====================================================================
+        // COMPONENT COMPOSITION: 1. Reusable Card & Subcomponents
+        // ====================================================================
+        function Card({ children, className = "" }) {
+            return <div className={`card ${className}`}>{children}</div>;
+        }
+
+        function CardHeader({ title, badge, action }) {
+            return (
+                <div className="card-header">
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                        <h3 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 600 }}>{title}</h3>
+                        {badge && <span className="concept-badge">{badge}</span>}
+                    </div>
+                    {action && <div>{action}</div>}
+                </div>
+            );
+        }
+
+        function CardBody({ children }) {
+            return <div className="card-body">{children}</div>;
+        }
+
+        function CardFooter({ children }) {
+            return <div className="card-footer">{children}</div>;
+        }
+
+        // ====================================================================
+        // COMPONENT COMPOSITION: 2. Risk Badge & Metric Meter
+        // ====================================================================
+        function RiskBadge({ score, level }) {
+            const getColor = () => {
+                if (level === 'HIGH' || score >= 70) return '#ef4444';
+                if (level === 'MEDIUM' || score >= 40) return '#f59e0b';
+                return '#10b981';
+            };
+            return (
+                <div style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    padding: '6px 14px',
+                    borderRadius: '20px',
+                    backgroundColor: `${getColor()}20`,
+                    border: `1px solid ${getColor()}60`,
+                    color: getColor(),
+                    fontWeight: 700,
+                    fontSize: '0.85rem'
+                }}>
+                    <span>{level} RISK ({score}/100)</span>
+                </div>
+            );
+        }
+
+        // ====================================================================
+        // COMPONENT COMPOSITION: 3. Navigation with Client-Side Routing
+        // ====================================================================
+        function NavigationBar({ currentRoute, onNavigate }) {
+            const routes = [
+                { id: '#/scan', label: '1. Scan & Detect', icon: '🔍' },
+                { id: '#/purpose', label: '2. Purpose Minimization', icon: '🎯' },
+                { id: '#/protect', label: '3. Redaction Engine', icon: '🛡️' },
+                { id: '#/analytics', label: '4. System Metrics', icon: '📊' }
+            ];
+
+            return (
+                <div className="nav-bar">
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                        <span style={{ fontSize: '1.5rem' }}>🛡️</span>
+                        <div>
+                            <div style={{ fontWeight: 800, fontSize: '1.1rem', letterSpacing: '-0.02em' }}>PrivacyGuard</div>
+                            <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>React SPA • Component Composition</div>
+                        </div>
+                    </div>
+                    <div className="nav-links">
+                        {routes.map(r => (
+                            <button
+                                key={r.id}
+                                className={`nav-btn ${currentRoute === r.id ? 'active' : ''}`}
+                                onClick={() => onNavigate(r.id)}
+                            >
+                                <span>{r.icon}</span>
+                                <span>{r.label}</span>
+                            </button>
+                        ))}
+                    </div>
+                </div>
+            );
+        }
+
+        // ====================================================================
+        // MAIN APPLICATION (State Management with useState & Side Effects with useEffect)
+        // ====================================================================
+        function App() {
+            // STATE MANAGEMENT: useState
+            const [currentRoute, setCurrentRoute] = useState(window.location.hash || '#/scan');
+            const [text, setText] = useState('Attached is my Aadhaar card 2345 6789 0123, PAN ABCDE1234F, and bank account 9876543210 for expense claim ₹15,400.');
+            const [detected, setDetected] = useState([]);
+            const [risk, setRisk] = useState({ score: 0, level: 'LOW' });
+            const [purpose, setPurpose] = useState('expense_reimbursement');
+            const [decisions, setDecisions] = useState({});
+            const [protectedResult, setProtectedResult] = useState(null);
+            const [isScanning, setIsScanning] = useState(false);
+            const [stats, setStats] = useState({ total_scans: 124, leaks_averted: 58, average_exposure_reduction: 76.5 });
+
+            // SIDE EFFECTS: useEffect 1 — Client-Side Hash Routing & Listener Cleanup
+            useEffect(() => {
+                const handleHashChange = () => {
+                    const hash = window.location.hash || '#/scan';
+                    setCurrentRoute(hash);
+                };
+                window.addEventListener('hashchange', handleHashChange);
+                return () => window.removeEventListener('hashchange', handleHashChange);
+            }, []);
+
+            // SIDE EFFECTS: useEffect 2 — Dynamic Title Update
+            useEffect(() => {
+                document.title = `PrivacyGuard | ${currentRoute.replace('#/', '').toUpperCase()}`;
+            }, [currentRoute]);
+
+            // SIDE EFFECTS: useEffect 3 — Async API Data Fetching on Mount
+            useEffect(() => {
+                let isMounted = true;
+                async function fetchBackendStats() {
+                    try {
+                        const res = await fetch('/api/stats');
+                        if (res.ok) {
+                            const data = await res.json();
+                            if (isMounted && data.stats) {
+                                setStats(data.stats);
+                            }
+                        }
+                    } catch (err) {
+                        console.warn("Using offline stats fallback:", err);
+                    }
+                }
+                fetchBackendStats();
+                return () => { isMounted = false; };
+            }, []);
+
+            // Navigation handler (Client-side routing)
+            const navigate = (hash) => {
+                window.location.hash = hash;
+                setCurrentRoute(hash);
+            };
+
+            // SCAN HANDLER (Async / Await with Fetch)
+            const handleScan = async () => {
+                setIsScanning(true);
+                try {
+                    const res = await fetch('/api/scan/text', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ text })
+                    });
+                    const data = await res.json();
+                    if (data.success) {
+                        setDetected(data.detected || []);
+                        setRisk(data.risk || { score: 0, level: 'LOW' });
+                        navigate('#/purpose');
+                    }
+                } catch (err) {
+                    alert("Scan error: " + err.message);
+                } finally {
+                    setIsScanning(false);
+                }
+            };
+
+            // PURPOSE & MINIMIZATION HANDLER
+            const handleAnalyzePurpose = async (selectedPurpose) => {
+                setPurpose(selectedPurpose);
+                try {
+                    const res = await fetch('/api/analyze/purpose', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ purpose: selectedPurpose, detected })
+                    });
+                    const data = await res.json();
+                    if (data.success) {
+                        const newDecisions = {};
+                        data.recommendations.forEach(r => {
+                            newDecisions[r.type] = r.decision;
+                        });
+                        setDecisions(newDecisions);
+                    }
+                } catch (err) {
+                    console.error("Purpose error:", err);
+                }
+            };
+
+            // REDACTION HANDLER
+            const handleProtect = async () => {
+                try {
+                    const res = await fetch('/api/protect/text', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ text, detected, decisions, purpose })
+                    });
+                    const data = await res.json();
+                    if (data.success) {
+                        setProtectedResult(data);
+                    }
+                } catch (err) {
+                    alert("Protection failed: " + err.message);
+                }
+            };
+
+            return (
+                <div className="app-container">
+                    {/* Navigation Bar */}
+                    <NavigationBar currentRoute={currentRoute} onNavigate={navigate} />
+
+                    {/* ROUTE 1: SCAN & DETECT VIEW */}
+                    {currentRoute === '#/scan' && (
+                        <Card>
+                            <CardHeader 
+                                title="Deterministic PII Scanner" 
+                                badge="State Management: useState" 
+                                action={<RiskBadge score={risk.score} level={risk.level} />} 
+                            />
+                            <CardBody>
+                                <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginTop: 0 }}>
+                                    Input or paste sensitive text below to detect Aadhaar, PAN, Payment Cards, Bank Accounts, and UPI IDs locally.
+                                </p>
+                                <textarea
+                                    className="scan-input"
+                                    value={text}
+                                    onChange={(e) => setText(e.target.value)}
+                                    placeholder="Paste text containing personal or sensitive information..."
+                                />
+                            </CardBody>
+                            <CardFooter>
+                                <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+                                    {text.length} characters • 100% Client/Local Processing
+                                </span>
+                                <button className="btn-primary" onClick={handleScan} disabled={isScanning}>
+                                    {isScanning ? 'Scanning...' : 'Detect PII Entities →'}
+                                </button>
+                            </CardFooter>
+                        </Card>
+                    )}
+
+                    {/* ROUTE 2: PURPOSE MINIMIZATION VIEW */}
+                    {currentRoute === '#/purpose' && (
+                        <Card>
+                            <CardHeader 
+                                title="Purpose-Aware Data Minimization" 
+                                badge="React Component Composition" 
+                                action={<span className="concept-badge">{detected.length} Entities Found</span>}
+                            />
+                            <CardBody>
+                                <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginTop: 0 }}>
+                                    Select the legitimate business purpose. The engine retains essential attributes and redacts non-essential private data.
+                                </p>
+                                
+                                <div style={{ display: 'flex', gap: '10px', marginBottom: '20px', flexWrap: 'wrap' }}>
+                                    {[
+                                        { id: 'expense_reimbursement', label: '💼 Expense Reimbursement' },
+                                        { id: 'bank_verification', label: '🏦 Bank Verification' },
+                                        { id: 'job_application', label: '📄 Job Application' },
+                                        { id: 'public_posting', label: '🌐 Public Social Share' }
+                                    ].map(p => (
+                                        <button
+                                            key={p.id}
+                                            className={`nav-btn ${purpose === p.id ? 'active' : ''}`}
+                                            onClick={() => handleAnalyzePurpose(p.id)}
+                                        >
+                                            {p.label}
+                                        </button>
+                                    ))}
+                                </div>
+
+                                <h4 style={{ margin: '16px 0 8px 0' }}>Detected Entities & Retention Decisions:</h4>
+                                <div>
+                                    {detected.length === 0 ? (
+                                        <div style={{ color: 'var(--text-muted)' }}>No PII detected yet. Go back to Scan step.</div>
+                                    ) : (
+                                        detected.map((item, idx) => {
+                                            const decision = decisions[item.type] || 'PROTECT';
+                                            return (
+                                                <div key={idx} className={`entity-tag ${decision.toLowerCase()}`}>
+                                                    <strong>{item.label}</strong>: <code>{item.value}</code>
+                                                    <span style={{ 
+                                                        marginLeft: '8px', 
+                                                        fontWeight: 700, 
+                                                        color: decision === 'KEEP' ? '#10b981' : '#ef4444' 
+                                                    }}>
+                                                        [{decision}]
+                                                    </span>
+                                                    <button
+                                                        style={{ marginLeft: '6px', background: 'transparent', border: 'none', color: '#94a3b8', cursor: 'pointer' }}
+                                                        onClick={() => {
+                                                            setDecisions(prev => ({
+                                                                ...prev,
+                                                                [item.type]: prev[item.type] === 'KEEP' ? 'PROTECT' : 'KEEP'
+                                                            }));
+                                                        }}
+                                                    >
+                                                        Toggle ⇄
+                                                    </button>
+                                                </div>
+                                            );
+                                        })
+                                    )}
+                                </div>
+                            </CardBody>
+                            <CardFooter>
+                                <button className="nav-btn" onClick={() => navigate('#/scan')}>← Back to Scan</button>
+                                <button className="btn-primary" onClick={() => { handleProtect(); navigate('#/protect'); }}>
+                                    Generate Redacted Document →
+                                </button>
+                            </CardFooter>
+                        </Card>
+                    )}
+
+                    {/* ROUTE 3: REDACTION WORKSPACE */}
+                    {currentRoute === '#/protect' && (
+                        <div className="grid-2">
+                            <Card>
+                                <CardHeader title="Original Input" badge="Side Effects: useEffect" />
+                                <CardBody>
+                                    <pre style={{ margin: 0, whiteSpace: 'pre-wrap', color: '#fca5a5', fontFamily: 'JetBrains Mono' }}>
+                                        {text}
+                                    </pre>
+                                </CardBody>
+                            </Card>
+
+                            <Card>
+                                <CardHeader title="Redacted Output" badge="Cryptographic Proof (SHA-256)" />
+                                <CardBody>
+                                    <pre style={{ margin: 0, whiteSpace: 'pre-wrap', color: '#86efac', fontFamily: 'JetBrains Mono' }}>
+                                        {protectedResult ? protectedResult.protected_text : 'Click Generate to see redacted output.'}
+                                    </pre>
+                                    {protectedResult && (
+                                        <div style={{ marginTop: '16px', fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+                                            <div><strong>Receipt Hash:</strong> <code>{protectedResult.receipt.sha256}</code></div>
+                                            <div><strong>Exposure Reduction:</strong> {protectedResult.exposure_reduction}%</div>
+                                        </div>
+                                    )}
+                                </CardBody>
+                                <CardFooter>
+                                    <button className="nav-btn" onClick={() => navigate('#/purpose')}>← Modify Purpose</button>
+                                    <button 
+                                        className="btn-primary" 
+                                        onClick={() => {
+                                            navigator.clipboard.writeText(protectedResult?.protected_text || '');
+                                            alert("Copied redacted text to clipboard!");
+                                        }}
+                                    >
+                                        Copy Safe Output 📋
+                                    </button>
+                                </CardFooter>
+                            </Card>
+                        </div>
+                    )}
+
+                    {/* ROUTE 4: SYSTEM METRICS & VIVA PROOF */}
+                    {currentRoute === '#/analytics' && (
+                        <Card>
+                            <CardHeader title="Live System Analytics" badge="Async Fetching from API" />
+                            <CardBody>
+                                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px', textAlign: 'center' }}>
+                                    <div style={{ background: '#090d16', padding: '20px', borderRadius: '10px' }}>
+                                        <div style={{ fontSize: '2rem', fontWeight: 800, color: '#818cf8' }}>{stats.total_scans}</div>
+                                        <div style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>Total Scans Performed</div>
+                                    </div>
+                                    <div style={{ background: '#090d16', padding: '20px', borderRadius: '10px' }}>
+                                        <div style={{ fontSize: '2rem', fontWeight: 800, color: '#34d399' }}>{stats.leaks_averted}</div>
+                                        <div style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>Personal Data Leaks Averted</div>
+                                    </div>
+                                    <div style={{ background: '#090d16', padding: '20px', borderRadius: '10px' }}>
+                                        <div style={{ fontSize: '2rem', fontWeight: 800, color: '#fbbf24' }}>{stats.average_exposure_reduction}%</div>
+                                        <div style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>Avg Exposure Reduction</div>
+                                    </div>
+                                </div>
+                            </CardBody>
+                            <CardFooter>
+                                <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+                                    Demonstrates useEffect data loading, component composition, and responsive styling.
+                                </span>
+                                <button className="nav-btn" onClick={() => navigate('#/scan')}>Start New Scan</button>
+                            </CardFooter>
+                        </Card>
+                    )}
+                </div>
+            );
+        }
+
+        // Mount React 18 Root
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>

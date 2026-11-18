@@ -1102,7 +1102,7 @@ function initInteractiveSandbox() {
             const scanController = new AbortController();
             const scanTimeout = setTimeout(() => scanController.abort(), 3500);
 
-            const scanResp = await fetch("http://127.0.0.1:8000/api/scan/text", {
+            const scanResp = await fetch("/api/scan/text", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ text }),
@@ -1136,7 +1136,7 @@ function initInteractiveSandbox() {
             const purposeController = new AbortController();
             const purposeTimeout = setTimeout(() => purposeController.abort(), 3500);
 
-            const purposeResp = await fetch("http://127.0.0.1:8000/api/analyze/purpose", {
+            const purposeResp = await fetch("/api/analyze/purpose", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
@@ -1197,7 +1197,7 @@ function initInteractiveSandbox() {
             const protectController = new AbortController();
             const protectTimeout = setTimeout(() => protectController.abort(), 3500);
 
-            const protectResp = await fetch("http://127.0.0.1:8000/api/protect/text", {
+            const protectResp = await fetch("/api/protect/text", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
@@ -1222,7 +1222,10 @@ function initInteractiveSandbox() {
             if (riskAfterLabel) {
                 const afterScore = (protectResult && typeof protectResult.risk_after === "number")
                     ? protectResult.risk_after
-                    : 15;
+                    : 0;
+                const afterLevel = protectResult?.risk_level || (afterScore >= 70 ? "HIGH" : (afterScore >= 40 ? "MEDIUM" : "SAFE"));
+                riskAfterLabel.textContent = `Risk: ${afterScore} (${afterLevel})`;
+            }
                 const afterLevel = afterScore >= 70 ? "HIGH" : (afterScore >= 40 ? "MEDIUM" : "SAFE");
                 riskAfterLabel.textContent = `Risk: ${afterScore} (${afterLevel})`;
             }

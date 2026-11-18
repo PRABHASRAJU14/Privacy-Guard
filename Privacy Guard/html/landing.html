@@ -112,6 +112,17 @@
 
         <div class="nav-actions">
 
+            <button
+                class="btn-nav-loggers"
+                id="openLoggersConsoleBtn"
+                type="button"
+                style="height: 38px; padding: 0 14px; border-radius: 10px; background: rgba(99, 102, 241, 0.15); border: 1px solid rgba(99, 102, 241, 0.4); color: #818cf8; font-weight: 600; font-size: 13px; display: inline-flex; align-items: center; gap: 6px; cursor: pointer; transition: all 0.2s;"
+                title="View Live Domain Loggers & Audit Matters"
+            >
+                <span>📋</span>
+                <span>System Loggers</span>
+            </button>
+
             <div id="pgAuthNavWrapper" style="display:inline-flex; align-items:center;">
                 <button class="btn-nav-auth" id="openAuthModalBtn" type="button">
                     Sign In
@@ -1165,7 +1176,7 @@
 
 
 <!-- =========================================================
-     PURPOSE-AWARE DEMO / SANDBOX
+     LIVE PRODUCTION PRIVACY ENGINE / REAL-TIME WORKSPACE
 ========================================================= -->
 
 <section
@@ -1178,7 +1189,7 @@
         <div class="section-header">
 
             <span class="section-tag">
-                PURPOSE-AWARE DEMO
+                REAL-TIME COMPLIANCE ENGINE
             </span>
 
             <h2 class="section-title">
@@ -1399,13 +1410,13 @@ Electricity -₹2,140</textarea>
             </h2>
 
             <p class="section-subtitle" style="max-width: 680px; margin: 12px auto 0; font-size: 1rem; color: var(--muted); text-align: center;">
-                Watch the end-to-end interactive demo video: from automated multimodal PII detection to purpose minimization and zero-leak cryptographic sharing.
+                Inspect the end-to-end production pipeline: from automated multimodal PII detection to purpose minimization and zero-leak cryptographic sharing.
             </p>
 
         </div>
 
         <!-- =========================================================
-             DEMO VIDEO SHOWCASE PLAYER
+             PRODUCTION WORKFLOW & SYSTEM ARCHITECTURE SHOWCASE
         ========================================================= -->
         <div class="demo-video-showcase" id="demoVideoShowcase">
             <div class="demo-video-window">
@@ -1643,7 +1654,7 @@ Electricity -₹2,140</textarea>
                                 </svg>
                             </button>
 
-                            <button type="button" class="ctrl-btn restart-btn" id="videoRestartBtn" title="Restart Demo">
+                            <button type="button" class="ctrl-btn restart-btn" id="videoRestartBtn" title="Replay Architecture Showcase">
                                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                     <path d="M1 4v6h6"></path>
                                     <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
@@ -1691,7 +1702,7 @@ Electricity -₹2,140</textarea>
 
         <div class="steps-grid" style="grid-template-columns: repeat(4, 1fr);">
 
-            <div class="step-card" id="stepCard1" style="cursor: pointer;" title="Jump to 01 Detect in Demo">
+            <div class="step-card" id="stepCard1" style="cursor: pointer;" title="Jump to 01 Detection Engine">
 
                 <span class="step-number">
                     01
@@ -1713,7 +1724,7 @@ Electricity -₹2,140</textarea>
             </div>
 
 
-            <div class="step-card" id="stepCard2" style="cursor: pointer;" title="Jump to 02 Understand in Demo">
+            <div class="step-card" id="stepCard2" style="cursor: pointer;" title="Jump to 02 Purpose Engine">
 
                 <span class="step-number">
                     02
@@ -1735,7 +1746,7 @@ Electricity -₹2,140</textarea>
             </div>
 
 
-            <div class="step-card" id="stepCard3" style="cursor: pointer;" title="Jump to 03 Protect in Demo">
+            <div class="step-card" id="stepCard3" style="cursor: pointer;" title="Jump to 03 Redaction Engine">
 
                 <span class="step-number">
                     03
@@ -1756,7 +1767,7 @@ Electricity -₹2,140</textarea>
 
             </div>
 
-            <div class="step-card" id="stepCard4" style="cursor: pointer;" title="Jump to 04 Verify in Demo">
+            <div class="step-card" id="stepCard4" style="cursor: pointer;" title="Jump to 04 Audit Verification">
 
                 <span class="step-number">
                     04
@@ -1959,6 +1970,7 @@ Electricity -₹2,140</textarea>
 
 <script src="../js/landing.js"></script>
 <script src="../js/auth_modal.js"></script>
+<script src="../js/loggers_console.js"></script>
 
 </body>
 </html>

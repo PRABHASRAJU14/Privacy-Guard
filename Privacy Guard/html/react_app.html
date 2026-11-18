@@ -232,7 +232,8 @@
                 { id: '#/scan', label: '1. Scan & Detect', icon: '🔍' },
                 { id: '#/purpose', label: '2. Purpose Minimization', icon: '🎯' },
                 { id: '#/protect', label: '3. Redaction Engine', icon: '🛡️' },
-                { id: '#/analytics', label: '4. System Metrics', icon: '📊' }
+                { id: '#/analytics', label: '4. System Metrics', icon: '📊' },
+                { id: '#/loggers', label: '5. Domain Loggers & Matters', icon: '📋' }
             ];
 
             return (
@@ -554,7 +555,104 @@
                             </CardFooter>
                         </Card>
                     )}
+
+                    {/* ROUTE 5: DOMAIN LOGGERS & MATTERS */}
+                    {currentRoute === '#/loggers' && <LoggersView navigate={navigate} />}
                 </div>
+            );
+        }
+
+        // ====================================================================
+        // COMPONENT 5: DOMAIN LOGGERS VIEW (Dedicated Loggers for Every Matter)
+        // ====================================================================
+        function LoggersView({ navigate }) {
+            const [category, setCategory] = useState('all');
+            const [logs, setLogs] = useState([]);
+            const [loading, setLoading] = useState(true);
+
+            const categories = [
+                { id: 'all', label: 'All Matters', icon: '🌐' },
+                { id: 'auth', label: 'Auth & OAuth', icon: '🔐' },
+                { id: 'security', label: 'Security & PII', icon: '🛡️' },
+                { id: 'ai_agent', label: 'AI Agent & RAG', icon: '🤖' },
+                { id: 'database', label: 'Database & SQL', icon: '🗄️' },
+                { id: 'http', label: 'HTTP Network', icon: '📡' },
+                { id: 'system', label: 'System & Redis', icon: '⚙️' }
+            ];
+
+            const fetchLogs = async () => {
+                try {
+                    const url = category === 'all' ? '/api/v1/logs?limit=50' : `/api/v1/logs?category=${category}&limit=50`;
+                    const res = await fetch(url);
+                    if (res.ok) {
+                        const data = await res.json();
+                        setLogs(data.data || []);
+                    }
+                } catch (e) {
+                    console.warn("Log fetch failed:", e);
+                } finally {
+                    setLoading(false);
+                }
+            };
+
+            useEffect(() => {
+                fetchLogs();
+                const timer = setInterval(fetchLogs, 3500);
+                return () => clearInterval(timer);
+            }, [category]);
+
+            return (
+                <Card>
+                    <CardHeader title="Universal Domain Loggers" badge="Every Logger Tracks Specific Matters" />
+                    <CardBody>
+                        <div style={{ display: 'flex', gap: '8px', marginBottom: '16px', overflowX: 'auto', paddingBottom: '4px' }}>
+                            {categories.map(c => (
+                                <button
+                                    key={c.id}
+                                    className={`nav-btn ${category === c.id ? 'active' : ''}`}
+                                    onClick={() => setCategory(c.id)}
+                                    style={{ fontSize: '0.82rem', padding: '6px 12px' }}
+                                >
+                                    <span>{c.icon}</span>
+                                    <span>{c.label}</span>
+                                </button>
+                            ))}
+                        </div>
+
+                        <div style={{ background: '#070a13', border: '1px solid var(--border-dark)', borderRadius: '10px', padding: '14px', maxHeight: '420px', overflowY: 'auto', fontFamily: 'JetBrains Mono, monospace', fontSize: '0.78rem' }}>
+                            {loading && logs.length === 0 ? (
+                                <div style={{ color: 'var(--text-muted)', textAlign: 'center', padding: '24px 0' }}>Streaming logs from server...</div>
+                            ) : logs.length === 0 ? (
+                                <div style={{ color: 'var(--text-muted)', textAlign: 'center', padding: '24px 0' }}>No logs recorded for this category yet.</div>
+                            ) : (
+                                logs.map(l => (
+                                    <div key={l.id} style={{ padding: '6px 0', borderBottom: '1px solid rgba(255,255,255,0.04)', display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                                        <div style={{ display: 'flex', gap: '8px', alignItems: 'baseline', flexWrap: 'wrap' }}>
+                                            <span style={{ color: '#475569' }}>{l.timestamp ? l.timestamp.split('T')[1].replace('Z','') : ''}</span>
+                                            <span style={{ color: '#818cf8', fontWeight: 700 }}>[{l.label}]</span>
+                                            <span style={{ color: l.level === 'AUDIT' ? '#c084fc' : (l.level === 'WARN' ? '#fbbf24' : '#34d399'), fontWeight: 600 }}>[{l.level}]</span>
+                                            <span style={{ color: '#fb923c', fontWeight: 600 }}>[{l.matter}]</span>
+                                            <span style={{ color: '#f8fafc' }}>{l.message}</span>
+                                        </div>
+                                        {l.meta && Object.keys(l.meta).length > 0 && (
+                                            <div style={{ color: '#64748b', paddingLeft: '20px', wordBreak: 'break-all' }}>
+                                                ↳ {JSON.stringify(l.meta)}
+                                            </div>
+                                        )}
+                                    </div>
+                                ))
+                            )}
+                        </div>
+                    </CardBody>
+                    <CardFooter>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', alignItems: 'center' }}>
+                            <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+                                Dedicated files: <code>logs/auth.log</code>, <code>logs/security.log</code>, <code>logs/ai_agent.log</code>, <code>logs/database.log</code>, <code>logs/http.log</code>, <code>logs/system.log</code>
+                            </span>
+                            <button className="nav-btn" onClick={() => navigate('#/scan')}>← Back to Scanner</button>
+                        </div>
+                    </CardFooter>
+                </Card>
             );
         }
 

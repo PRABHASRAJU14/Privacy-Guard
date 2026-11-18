@@ -231,6 +231,24 @@ async function runTestSuite() {
     it("19. Writing unit tests — Asserts discrete components and boundary conditions independently", () => {
         assert.strictEqual(typeof it, "function");
         assert.strictEqual(typeof itAsync, "function");
+
+        // Verify Universal Domain Loggers each have their own matters and safe masking
+        const loggerService = require("../backend/services/logger_service");
+        const { authLogger, securityLogger, aiLogger, databaseLogger, httpLogger, systemLogger, getLogStats } = loggerService;
+        
+        assert.ok(authLogger && authLogger.category === "auth");
+        assert.ok(securityLogger && securityLogger.category === "security");
+        assert.ok(aiLogger && aiLogger.category === "ai_agent");
+        assert.ok(databaseLogger && databaseLogger.category === "database");
+        assert.ok(httpLogger && httpLogger.category === "http");
+        assert.ok(systemLogger && systemLogger.category === "system");
+
+        const testLog = authLogger.audit("OAUTH_HANDSHAKE", "Unit test OAuth matter assertion", { secretKey: "supersecret123" });
+        assert.strictEqual(testLog.matter, "OAUTH_HANDSHAKE");
+        assert.strictEqual(testLog.meta.secretKey, "****** [MASKED]");
+
+        const stats = getLogStats();
+        assert.ok(stats.categories.auth.total > 0);
     });
 
     // ========================================================================

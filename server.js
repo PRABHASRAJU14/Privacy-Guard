@@ -30,6 +30,20 @@ const { AdvancedMongoAuditStore } = require("./backend/database/mongo_advanced")
 const { RelationalSQLStore } = require("./backend/database/sql_advanced");
 const systemIntegration = require("./backend/services/system_integration_service");
 
+// Import Universal Domain-Specific Loggers (Every Logger has its own matters)
+const {
+    authLogger,
+    securityLogger,
+    aiLogger,
+    databaseLogger,
+    httpLogger,
+    systemLogger,
+    getLogs,
+    getLogStats,
+    registerSseClient,
+    unregisterSseClient
+} = require("./backend/services/logger_service");
+
 // Instantiate Singletons
 const autonomousAgent = new aiSuite.PrivacyGuardAutonomousAgent();
 const ragKnowledgeBase = new aiSuite.VectorKnowledgeBase();
@@ -132,11 +146,18 @@ function timingMiddleware(req, res, next) {
     const startTime = process.hrtime();
     const originalEnd = res.end;
     res.end = function (...args) {
+        const diff = process.hrtime(startTime);
+        const durationMs = (diff[0] * 1e3 + diff[1] * 1e-6).toFixed(2);
         if (!res.headersSent) {
-            const diff = process.hrtime(startTime);
-            const durationMs = (diff[0] * 1e3 + diff[1] * 1e-6).toFixed(2);
             res.setHeader("X-Response-Time", `${durationMs}ms`);
         }
+        // Domain Logger for HTTP Response matter
+        httpLogger.info("HTTP_RESPONSE", `${req.method} ${req.url} -> ${res.statusCode} (${durationMs}ms)`, {
+            method: req.method,
+            url: req.url,
+            statusCode: res.statusCode,
+            durationMs: parseFloat(durationMs)
+        });
         originalEnd.apply(res, args);
     };
     next();
@@ -145,16 +166,24 @@ function timingMiddleware(req, res, next) {
 function loggerMiddleware(req, res, next) {
     const method = req.method;
     const url = req.url;
-    // Log without exposing any request body or query parameter secrets
-    if (process.env.LOG_LEVEL !== "SILENT") {
-        console.log(`[${new Date().toISOString()}] ${method} ${url}`);
-    }
+    // Domain Logger for HTTP Request matter (Masks query params / tokens)
+    httpLogger.info("HTTP_REQUEST", `${method} ${url}`, {
+        method,
+        url,
+        ip: req.socket.remoteAddress || "127.0.0.1",
+        userAgent: req.headers["user-agent"] || "unknown"
+    });
     next();
 }
 
 function rateLimitMiddleware(req, res, next) {
     const check = rateLimiter();
     if (!check.allowed) {
+        // Domain Logger for Security Threat matter: rate limit enforcement
+        securityLogger.warn("RATE_LIMIT_EXCEEDED", `Rate limit triggered for client. Throttled for ${check.resetInMs}ms`, {
+            ip: req.socket.remoteAddress || "127.0.0.1",
+            retryAfterMs: check.resetInMs
+        });
         res.writeHead(429, { "Content-Type": "application/json" });
         res.end(JSON.stringify({
             error: "Too Many Requests",
@@ -476,7 +505,9 @@ function redactText(text, detected, decisions) {
         const d = (decisions && decisions[item.type]) || "PROTECT";
         return d === "KEEP";
     });
-    const risk_after = calculateRisk(remainingItems).score;
+    const riskAfterObj = calculateRisk(remainingItems);
+    const risk_after = typeof riskAfterObj.score === "number" ? Math.round(riskAfterObj.score) : 0;
+    const risk_level = riskAfterObj.level || "SAFE";
 
     return {
         success: true,
@@ -485,6 +516,7 @@ function redactText(text, detected, decisions) {
         kept_count,
         exposure_reduction,
         risk_after,
+        risk_level,
         receipt: {
             sha256,
             timestamp: new Date().toISOString()
@@ -779,6 +811,13 @@ const server = http.createServer((req, res) => {
                 const data = await readJsonBody(req);
                 const detected = detectPII(data.text || "");
                 const risk = calculateRisk(detected);
+                // Domain Logger for Security Scanner matter
+                securityLogger.audit("PII_DETECTION_SCAN", `Scanned text: detected ${detected.length} sensitive items with Risk Score ${risk.score} (${risk.level})`, {
+                    count: detected.length,
+                    riskScore: risk.score,
+                    riskLevel: risk.level,
+                    types: detected.map(d => d.type)
+                });
                 res.writeHead(200, { "Content-Type": "application/json" });
                 res.end(JSON.stringify({
                     success: true,
@@ -791,7 +830,14 @@ const server = http.createServer((req, res) => {
 
             if (pathname === "/api/analyze/purpose" && req.method === "POST") {
                 const data = await readJsonBody(req);
-                const result = analyzePurpose(data.purpose || "expense_reimbursement", data.detected || []);
+                const purpose = data.purpose || "expense_reimbursement";
+                const result = analyzePurpose(purpose, data.detected || []);
+                // Domain Logger for Purpose Policy Minimization matter
+                securityLogger.info("PURPOSE_MINIMIZATION_ANALYSIS", `Evaluated policy '${purpose}': ${result.total_keep} items kept, ${result.total_protect} items flagged for protection`, {
+                    purpose,
+                    totalKeep: result.total_keep,
+                    totalProtect: result.total_protect
+                });
                 res.writeHead(200, { "Content-Type": "application/json" });
                 res.end(JSON.stringify(result));
                 return;
@@ -800,7 +846,19 @@ const server = http.createServer((req, res) => {
             if (pathname === "/api/protect/text" && req.method === "POST") {
                 const data = await readJsonBody(req);
                 const result = redactText(data.text || "", data.detected || [], data.decisions || {});
+                // Domain Logger for Cryptographic Redaction & Integrity Receipt matter
+                securityLogger.audit("CRYPTOGRAPHIC_REDACTION", `Executed redaction: ${result.protected_count} items protected, exposure reduced ${result.exposure_reduction}%, Risk after: ${result.risk_after} (${result.risk_level})`, {
+                    protectedCount: result.protected_count,
+                    keptCount: result.kept_count,
+                    exposureReduction: result.exposure_reduction,
+                    riskAfter: result.risk_after,
+                    riskLevel: result.risk_level,
+                    sha256: result.receipt.sha256
+                });
                 res.writeHead(200, { "Content-Type": "application/json" });
+                res.end(JSON.stringify(result));
+                return;
+            }
                 res.end(JSON.stringify(result));
                 return;
             }
@@ -869,6 +927,13 @@ const server = http.createServer((req, res) => {
                 const body = await readJsonBody(req);
                 const user = { id: body.id || "usr-1", username: body.username || "prabhas", role: body.role || "compliance_officer" };
                 const token = authSecurity.JWTService.sign(user, 3600);
+                // Domain Logger for Auth Identity matter: JWT creation
+                authLogger.audit("JWT_ISSUANCE", `Issued RFC 7519 HMAC-SHA256 JWT for user '${user.username}' (Role: ${user.role})`, {
+                    userId: user.id,
+                    username: user.username,
+                    role: user.role,
+                    ttlSeconds: 3600
+                });
                 res.writeHead(200, { "Content-Type": "application/json" });
                 res.end(JSON.stringify({ success: true, token, user }));
                 return;
@@ -879,6 +944,11 @@ const server = http.createServer((req, res) => {
                 const authHeader = req.headers.authorization || "";
                 const token = body.token || (authHeader.startsWith("Bearer ") ? authHeader.slice(7) : "");
                 const result = authSecurity.JWTService.verify(token);
+                // Domain Logger for Auth Identity matter: JWT validation
+                authLogger.info("JWT_VERIFICATION", `Validated JWT token signature and expiration: valid=${result.valid}`, {
+                    valid: result.valid,
+                    claims: result.claims ? { user: result.claims.username, role: result.claims.role } : null
+                });
                 res.writeHead(result.valid ? 200 : 401, { "Content-Type": "application/json" });
                 res.end(JSON.stringify(result));
                 return;
@@ -891,6 +961,13 @@ const server = http.createServer((req, res) => {
                 const provider = parsedUrl.searchParams.get("provider") || (state.includes("github") ? "github" : state.includes("apple") ? "apple" : state.includes("linkedin") ? "linkedin" : "google");
                 const profile = oauthManager.exchangeMockCode(provider, code);
                 
+                // Domain Logger for Auth OAuth Callback matter
+                authLogger.audit("OAUTH_CALLBACK", `Processed OAuth 2.0 callback for provider '${provider}' -> User '${profile.name}'`, {
+                    provider,
+                    email: profile.email,
+                    providerUserId: profile.providerUserId
+                });
+
                 res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
                 res.end(`<!DOCTYPE html>
 <html>
@@ -925,6 +1002,11 @@ const server = http.createServer((req, res) => {
                 const provider = pathname.replace("/api/auth/oauth/", "").toLowerCase();
                 if (["google", "github", "apple", "linkedin"].includes(provider)) {
                     const oauthInfo = oauthManager.generateAuthorizationUrl(provider);
+                    // Domain Logger for Auth OAuth Handshake matter
+                    authLogger.info("OAUTH_HANDSHAKE", `Generated OAuth 2.0 authorization URL for '${provider}' with anti-CSRF state token`, {
+                        provider,
+                        state: oauthInfo.state
+                    });
                     res.writeHead(200, { "Content-Type": "application/json" });
                     res.end(JSON.stringify(oauthInfo));
                     return;
@@ -1039,6 +1121,50 @@ const server = http.createServer((req, res) => {
                 const ssrHtml = systemIntegration.ServerSideRenderer.renderComplianceReportHTML(scan);
                 res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
                 res.end(ssrHtml);
+                return;
+            }
+
+            // ----------------------------------------------------------------
+            // K. DOMAIN-SPECIFIC AUDIT & LOGGING ENDPOINTS (Every Logger has its own matters)
+            // ----------------------------------------------------------------
+            // 1. GET /api/v1/logs -> Multi-domain query by category, level, limit
+            if (pathname === "/api/v1/logs" && req.method === "GET") {
+                const category = parsedUrl.searchParams.get("category");
+                const level = parsedUrl.searchParams.get("level");
+                const limit = parseInt(parsedUrl.searchParams.get("limit") || "50", 10);
+                const logs = getLogs({ category, level, limit });
+                const stats = getLogStats();
+                res.writeHead(200, { "Content-Type": "application/json" });
+                res.end(JSON.stringify({
+                    status: 200,
+                    success: true,
+                    count: logs.length,
+                    stats: stats.categories,
+                    data: logs
+                }));
+                return;
+            }
+
+            // 2. GET /api/v1/logs/stats -> Overall health and counts across all domain loggers
+            if (pathname === "/api/v1/logs/stats" && req.method === "GET") {
+                const stats = getLogStats();
+                res.writeHead(200, { "Content-Type": "application/json" });
+                res.end(JSON.stringify(stats));
+                return;
+            }
+
+            // 3. GET /api/v1/logs/stream -> Live SSE event stream of all matters
+            if (pathname === "/api/v1/logs/stream" && req.method === "GET") {
+                res.writeHead(200, {
+                    "Content-Type": "text/event-stream",
+                    "Cache-Control": "no-cache",
+                    "Connection": "keep-alive"
+                });
+                res.write(`data: ${JSON.stringify({ type: "CONNECTED", message: "Live PrivacyGuard Logger Stream active." })}\n\n`);
+                registerSseClient(res);
+                req.on("close", () => {
+                    unregisterSseClient(res);
+                });
                 return;
             }
 

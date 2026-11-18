@@ -884,12 +884,51 @@ const server = http.createServer((req, res) => {
                 return;
             }
 
-            // 2. OAuth 2.0 / 3rd-Party Login (0.2 pts)
-            if (pathname === "/api/auth/oauth/google" && req.method === "GET") {
-                const oauthInfo = oauthManager.generateAuthorizationUrl("google");
-                res.writeHead(200, { "Content-Type": "application/json" });
-                res.end(JSON.stringify(oauthInfo));
+            // 2. OAuth 2.0 / 3rd-Party Login (0.2 pts) — Google, GitHub, Apple, LinkedIn
+            if (pathname === "/api/auth/oauth/callback") {
+                const code = parsedUrl.searchParams.get("code") || "mock_auth_code";
+                const state = parsedUrl.searchParams.get("state") || "";
+                const provider = parsedUrl.searchParams.get("provider") || (state.includes("github") ? "github" : state.includes("apple") ? "apple" : state.includes("linkedin") ? "linkedin" : "google");
+                const profile = oauthManager.exchangeMockCode(provider, code);
+                
+                res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
+                res.end(`<!DOCTYPE html>
+<html>
+<head><title>Authentication Complete</title></head>
+<body style="background:#0f172a;color:#fff;font-family:sans-serif;display:flex;align-items:center;justify-content:center;height:100vh;margin:0;">
+    <div style="text-align:center;">
+        <h2 style="color:#10b981;">✓ Authenticated via ${provider.toUpperCase()}</h2>
+        <p style="color:#94a3b8;">Finalizing session with PrivacyGuard...</p>
+    </div>
+    <script>
+        try {
+            if (window.opener) {
+                window.opener.postMessage({
+                    type: "PG_OAUTH_SUCCESS",
+                    provider: "${provider}",
+                    user: ${JSON.stringify(profile)}
+                }, "*");
+                setTimeout(() => window.close(), 600);
+            } else {
+                window.location.href = "/";
+            }
+        } catch (e) {
+            window.location.href = "/";
+        }
+    </script>
+</body>
+</html>`);
                 return;
+            }
+
+            if (pathname.startsWith("/api/auth/oauth/") && req.method === "GET") {
+                const provider = pathname.replace("/api/auth/oauth/", "").toLowerCase();
+                if (["google", "github", "apple", "linkedin"].includes(provider)) {
+                    const oauthInfo = oauthManager.generateAuthorizationUrl(provider);
+                    res.writeHead(200, { "Content-Type": "application/json" });
+                    res.end(JSON.stringify(oauthInfo));
+                    return;
+                }
             }
 
             // 3. Password Hashing (0.2 pts)

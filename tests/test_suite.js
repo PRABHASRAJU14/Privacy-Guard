@@ -143,12 +143,14 @@ async function runTestSuite() {
         assert.strictEqual(authSecurity.JWTService.verify(tampered).valid, false);
     });
 
-    it("10. OAuth / 3rd-party login — Generates OAuth 2.0 authorization URL with cryptographically secure anti-CSRF state", () => {
+    it("10. OAuth / 3rd-party login — Generates OAuth 2.0 authorization URL with cryptographically secure anti-CSRF state (Google, GitHub, Apple, LinkedIn)", () => {
         const manager = new authSecurity.OAuthManager();
-        const auth = manager.generateAuthorizationUrl("google");
-        assert.ok(auth.authUrl.includes("client_id"));
-        assert.ok(auth.authUrl.includes("state="));
-        assert.strictEqual(manager.validateState(auth.state).valid, true);
+        for (const provider of ["google", "github", "apple", "linkedin"]) {
+            const auth = manager.generateAuthorizationUrl(provider);
+            assert.ok(auth.authUrl.includes("client_id"));
+            assert.ok(auth.authUrl.includes("state="));
+            assert.strictEqual(manager.validateState(auth.state).valid, true);
+        }
         assert.strictEqual(manager.validateState("tampered_state").valid, false);
     });
 

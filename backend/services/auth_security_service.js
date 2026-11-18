@@ -217,6 +217,16 @@ class OAuthManager {
                 clientId: "privacyguard-github-oauth-client-id",
                 authUrl: "https://github.com/login/oauth/authorize",
                 scope: "read:user user:email"
+            },
+            apple: {
+                clientId: "privacyguard-apple-oauth-client-id",
+                authUrl: "https://appleid.apple.com/auth/authorize",
+                scope: "name email"
+            },
+            linkedin: {
+                clientId: "privacyguard-linkedin-oauth-client-id",
+                authUrl: "https://www.linkedin.com/oauth/v2/authorization",
+                scope: "r_liteprofile r_emailaddress"
             }
         };
         // In-memory active CSRF state cache (state -> timestamp)

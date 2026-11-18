@@ -1,0 +1,20 @@
+{
+  "version": 2,
+  "name": "privacyguard",
+  "builds": [
+    {
+      "src": "Privacy Guard/html/landing.html",
+      "use": "@vercel/static"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/app",
+      "dest": "/Privacy Guard/html/react_app.html"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/Privacy Guard/html/landing.html"
+    }
+  ]
+}

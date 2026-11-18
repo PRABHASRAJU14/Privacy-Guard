@@ -1,0 +1,12 @@
+[build]
+  publish = "Privacy Guard"
+
+[[redirects]]
+  from = "/app"
+  to = "/html/react_app.html"
+  status = 200
+
+[[redirects]]
+  from = "/*"
+  to = "/html/landing.html"
+  status = 200

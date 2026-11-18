@@ -531,6 +531,40 @@ const server = http.createServer((req, res) => {
             }
 
             // ----------------------------------------------------------------
+            // G. AUTHENTICATION ENDPOINTS (Sign In, Sign Up, Profile)
+            // ----------------------------------------------------------------
+            if (pathname === "/api/auth/signin" && req.method === "POST") {
+                const body = await readJsonBody(req);
+                const username = body.username || "User";
+                res.writeHead(200, { "Content-Type": "application/json" });
+                res.end(JSON.stringify({
+                    success: true,
+                    status: 200,
+                    message: `Welcome back, ${username}!`,
+                    username: username,
+                    email: body.username && body.username.includes("@") ? body.username : `${username.toLowerCase().replace(/\s+/g, '')}@privacyguard.local`,
+                    token: crypto.randomBytes(24).toString("hex")
+                }));
+                return;
+            }
+
+            if (pathname === "/api/auth/signup" && req.method === "POST") {
+                const body = await readJsonBody(req);
+                const username = body.username || "User";
+                const email = body.email || `${username.toLowerCase()}@privacyguard.local`;
+                res.writeHead(201, { "Content-Type": "application/json" });
+                res.end(JSON.stringify({
+                    success: true,
+                    status: 201,
+                    message: "User account created successfully",
+                    username: username,
+                    email: email,
+                    token: crypto.randomBytes(24).toString("hex")
+                }));
+                return;
+            }
+
+            // ----------------------------------------------------------------
             // B. NOSQL (MONGODB) CRUD DEMONSTRATION ENDPOINTS
             // ----------------------------------------------------------------
             if (pathname === "/api/v1/mongo/audits" && req.method === "GET") {

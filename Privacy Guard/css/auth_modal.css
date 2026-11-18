@@ -1,0 +1,326 @@
+/* ============================================================================
+   PRIVACYGUARD — AUTHENTICATION MODAL (SIGN IN & SIGN UP)
+   Matches LeetCode Modal Architecture with PrivacyGuard Design System
+   ============================================================================ */
+
+/* 1. Modal Overlay Backdrop */
+.pg-auth-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(4, 7, 24, 0.75);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    z-index: 999999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.25s;
+}
+
+.pg-auth-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* 2. Modal Card */
+.pg-auth-card {
+    position: relative;
+    width: 390px;
+    max-width: calc(100vw - 32px);
+    background: #14192b;
+    border: 1px solid rgba(99, 102, 241, 0.25);
+    border-radius: 16px;
+    padding: 32px 28px 28px;
+    box-shadow: 0 25px 65px rgba(0, 0, 0, 0.65), 0 0 30px rgba(67, 56, 255, 0.15);
+    transform: scale(0.94) translateY(12px);
+    transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+    color: #f8fafc;
+    box-sizing: border-box;
+}
+
+.pg-auth-overlay.active .pg-auth-card {
+    transform: scale(1) translateY(0);
+}
+
+/* 3. Close Button (X) */
+.pg-auth-close {
+    position: absolute;
+    top: 16px;
+    right: 18px;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 50%;
+    color: #94a3b8;
+    font-size: 18px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    line-height: 1;
+}
+
+.pg-auth-close:hover {
+    background: rgba(239, 68, 68, 0.2);
+    border-color: rgba(239, 68, 68, 0.4);
+    color: #ef4444;
+    transform: rotate(90deg);
+}
+
+/* 4. Brand Header */
+.pg-auth-brand {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 24px;
+    text-align: center;
+}
+
+.pg-auth-logo {
+    width: 48px;
+    height: 48px;
+    margin-bottom: 8px;
+    filter: drop-shadow(0 4px 12px rgba(67, 56, 255, 0.4));
+}
+
+.pg-auth-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: #ffffff;
+    letter-spacing: -0.02em;
+    margin: 0;
+}
+
+/* 5. Inputs & Form Fields */
+.pg-auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.pg-auth-input-group {
+    position: relative;
+    width: 100%;
+}
+
+.pg-auth-input {
+    width: 100%;
+    height: 44px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 8px;
+    padding: 0 14px;
+    font-family: inherit;
+    font-size: 14px;
+    color: #ffffff;
+    box-sizing: border-box;
+    transition: all 0.2s ease;
+    outline: none;
+}
+
+.pg-auth-input:focus {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: #6366f1;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.25);
+}
+
+.pg-auth-input::placeholder {
+    color: #64748b;
+    font-size: 13.5px;
+}
+
+/* 6. Primary Action Button */
+.pg-auth-submit-btn {
+    width: 100%;
+    height: 44px;
+    margin-top: 4px;
+    background: linear-gradient(135deg, #4f46e5 0%, #3730a3 100%);
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 14.5px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 16px rgba(79, 70, 229, 0.35);
+}
+
+.pg-auth-submit-btn:hover {
+    background: linear-gradient(135deg, #5b52f2 0%, #4338ca 100%);
+    box-shadow: 0 6px 20px rgba(79, 70, 229, 0.5);
+    transform: translateY(-1px);
+}
+
+.pg-auth-submit-btn:active {
+    transform: translateY(0);
+}
+
+/* 7. Legal Notice */
+.pg-auth-legal {
+    font-size: 11.5px;
+    color: #94a3b8;
+    text-align: center;
+    margin-top: 14px;
+    line-height: 1.4;
+}
+
+.pg-auth-legal a {
+    color: #818cf8;
+    text-decoration: none;
+    transition: color 0.15s;
+}
+
+.pg-auth-legal a:hover {
+    color: #a5b4fc;
+    text-decoration: underline;
+}
+
+/* 8. Switcher & Helper Links */
+.pg-auth-links {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12.5px;
+    margin-top: 14px;
+}
+
+.pg-auth-links a {
+    color: #94a3b8;
+    text-decoration: none;
+    transition: color 0.15s;
+}
+
+.pg-auth-links a:hover {
+    color: #ffffff;
+}
+
+.pg-auth-links .pg-auth-highlight-link {
+    color: #818cf8;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.pg-auth-links .pg-auth-highlight-link:hover {
+    color: #a5b4fc;
+    text-decoration: underline;
+}
+
+/* 9. Social Login Divider */
+.pg-auth-divider {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 22px 0 16px;
+}
+
+.pg-auth-divider::before,
+.pg-auth-divider::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.pg-auth-divider span {
+    padding: 0 12px;
+    font-size: 11.5px;
+    color: #64748b;
+    text-transform: lowercase;
+}
+
+/* 10. Social Login Button Row */
+.pg-auth-socials {
+    display: flex;
+    justify-content: center;
+    gap: 14px;
+}
+
+.pg-auth-social-btn {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: #cbd5e1;
+}
+
+.pg-auth-social-btn:hover {
+    background: rgba(255, 255, 255, 0.14);
+    border-color: rgba(99, 102, 241, 0.4);
+    color: #ffffff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.pg-auth-social-btn svg {
+    width: 18px;
+    height: 18px;
+    fill: currentColor;
+}
+
+/* 11. Navbar Trigger Button */
+.btn-nav-auth {
+    height: 40px;
+    padding: 0 18px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #4f46e5 0%, #3730a3 100%);
+    color: #ffffff;
+    font-family: inherit;
+    font-size: 13.5px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 4px 14px rgba(79, 70, 229, 0.3);
+    transition: all 0.25s ease;
+}
+
+.btn-nav-auth:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(79, 70, 229, 0.45);
+    background: linear-gradient(135deg, #5b52f2 0%, #4338ca 100%);
+}
+
+.user-nav-profile {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 12px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 20px;
+    color: #f8fafc;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.user-nav-profile .avatar {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: #4f46e5;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+}

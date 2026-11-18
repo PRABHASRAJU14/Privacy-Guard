@@ -1,0 +1,20 @@
+{
+  "name": "privacy-guard",
+  "version": "1.0.0",
+  "description": "Local, purpose-aware personal data leak prevention for the web. Share Smart. Stay Private.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "node tests/test_suite.js"
+  },
+  "keywords": [
+    "privacy",
+    "data-minimization",
+    "pii-redaction",
+    "gdpr",
+    "dpdp",
+    "security"
+  ],
+  "author": "Prabhas Raju",
+  "license": "MIT"
+}

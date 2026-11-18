@@ -143,6 +143,47 @@ class BBox(BaseModel):
     height: int
 ```
 
+### 3.2 Audit Metadata Schema (`AuditMetadata` for `metadata_json`)
+```python
+class AuditMetadata(BaseModel):
+    """Structured, type-safe model for audit_events.metadata_json.
+    Supports variable entity category counts (NoSQL-like flexibility) with strict validation.
+    """
+    model_config = ConfigDict(extra="allow")
+
+    category_counts: Dict[str, NonNegativeInt] = Field(
+        default_factory=dict,
+        description="Dynamic mapping of entity categories to non-negative counts, e.g. {'fin': 2, 'id': 1}",
+    )
+    exposure_reduction: float = Field(
+        default=0.0,
+        ge=0.0,
+        le=100.0,
+        description="Percentage of privacy exposure reduced by minimization policy (0-100%)",
+    )
+    raw_entity_count: NonNegativeInt = Field(
+        default=0,
+        description="Total number of detected PII items before redaction",
+    )
+```
+
+### 3.3 AI Copilot Structured Output Schema (`AIPurposeEvaluation`)
+```python
+class EntityDecision(BaseModel):
+    entity_type: str
+    value: str
+    decision: str  # 'KEEP' | 'PROTECT'
+    rationale: str
+
+class AIPurposeEvaluation(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    purpose: str
+    total_keep: int
+    total_protect: int
+    decisions: List[EntityDecision]
+    summary_explanation: str
+```
+
 ### 3.2 Detected PII Schema (`DetectedPIIItem`)
 ```python
 class DetectedPIIItem(BaseModel):

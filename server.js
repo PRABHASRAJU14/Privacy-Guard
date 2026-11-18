@@ -379,7 +379,10 @@ const server = http.createServer((req, res) => {
     } else if (pathname.startsWith("/js/")) {
         filePath = path.join(FRONTEND_DIR, pathname);
     } else if (pathname.startsWith("/extension/")) {
-        filePath = path.join(EXTENSION_DIR, pathname.replace("/extension/", ""));
+        const sub = pathname.replace("/extension/", "");
+        const p1 = path.join(EXTENSION_DIR, sub);
+        const p2 = path.join(FRONTEND_DIR, "extension", sub);
+        filePath = fs.existsSync(p1) ? p1 : p2;
     } else {
         filePath = path.join(FRONTEND_DIR, pathname);
     }

@@ -1,6 +1,28 @@
 """Schemas for scan history and privacy audit statistics."""
-from typing import List, Optional
-from pydantic import BaseModel, Field
+from typing import List, Optional, Dict, Any
+from pydantic import BaseModel, Field, NonNegativeInt, ConfigDict
+
+
+class AuditMetadata(BaseModel):
+    """Structured model for audit_events.metadata_json.
+    Supports flexible entity category counts while enforcing type safety (e.g., {'fin': 2, 'id': 1}).
+    """
+    model_config = ConfigDict(extra="allow")
+
+    category_counts: Dict[str, NonNegativeInt] = Field(
+        default_factory=dict,
+        description="Flexible mapping of category shortcodes to entity count (e.g. {'fin': 2, 'id': 1})",
+    )
+    exposure_reduction: float = Field(
+        default=0.0,
+        ge=0.0,
+        le=100.0,
+        description="Percentage of privacy exposure reduced by minimization policy (0-100%)",
+    )
+    raw_entity_count: NonNegativeInt = Field(
+        default=0,
+        description="Total number of detected PII items before redaction",
+    )
 
 
 class HistoryItem(BaseModel):

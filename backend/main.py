@@ -15,6 +15,7 @@ from backend.api.protect import router as protect_router
 from backend.api.scan_file import router as scan_file_router
 from backend.api.protect_file import router as protect_file_router
 from backend.api.history import router as history_router
+from backend.api.ai import router as ai_router
 from backend.services.ocr import get_ocr_status
 from backend.database.database import init_db
 
@@ -73,6 +74,7 @@ app.include_router(protect_router)
 app.include_router(scan_file_router)
 app.include_router(protect_file_router)
 app.include_router(history_router)
+app.include_router(ai_router)
 
 # Mount Web Application Frontend & Extension
 frontend_dir = BASE_DIR.parent / "Privacy Guard"

@@ -21,6 +21,7 @@ if not errorlevel 1 (
     )
 )
 
+
 :: 2. Wait 2 seconds for server to bind port
 echo [2/2] Launching application in your browser...
 timeout /t 2 /nobreak >nul

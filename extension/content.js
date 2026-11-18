@@ -23,13 +23,17 @@
         if (!el || !(el instanceof Element)) return true;
         // Never scan passwords, hidden inputs, or buttons
         if (el.type === "password" || el.type === "hidden" || el.type === "submit" || el.type === "button") return true;
-        // Never scan inside PrivacyGuard's own UI or Auth modal
+        // Never scan inside PrivacyGuard's own UI, Auth modal, or landing page sandbox
+        if (el.id === "customInputText") return true;
         if (el.closest && (
             el.closest("#privacyguard-live-root") ||
             el.closest("#pgAuthOverlay") ||
             el.closest(".pg-auth-card") ||
             el.closest(".mockup-stage") ||
-            el.closest(".scanner-card")
+            el.closest(".scanner-card") ||
+            el.closest(".tester-card") ||
+            el.closest(".tester-grid") ||
+            el.closest("#features")
         )) return true;
         // Never scan elements marked with pg IDs or ignore flags
         if (el.id && el.id.startsWith("pg")) return true;
@@ -44,23 +48,42 @@
         if (!text || typeof text !== "string") return [];
         const items = [];
 
-        // 1. Aadhaar (12 digits with optional spaces)
-        const aadhaarRegex = /\b[2-9]\d{3}\s?\d{4}\s?\d{4}\b/g;
+        // 1. Bank Account Number (match before Aadhaar to prioritize financial accounts)
+        const bankRegex = /\b(?:bank\s*(?:account|acc|a\/c)?|account|acc|a\/c)[\s#:]*([0-9]{4}[\s-]?[0-9]{4}[\s-]?[0-9]{3,8}|[0-9]{9,18})\b/gi;
         let m;
-        while ((m = aadhaarRegex.exec(text)) !== null) {
+        while ((m = bankRegex.exec(text)) !== null) {
+            const val = m[1];
+            const valStart = m.index + m[0].indexOf(val);
             items.push({
-                type: "aadhaar",
-                label: "Aadhaar Number",
-                value: m[0],
-                category: "identity",
+                type: "bank_account",
+                label: "Bank Account Number",
+                value: val,
+                category: "financial",
                 severity: "HIGH",
-                risk_weight: 35,
-                start: m.index,
-                end: m.index + m[0].length
+                risk_weight: 30,
+                start: valStart,
+                end: valStart + val.length
             });
         }
 
-        // 2. PAN Card (5 letters, 4 digits, 1 letter)
+        // 2. Aadhaar (12 digits with optional spaces, excluding bank account spans)
+        const aadhaarRegex = /\b[2-9]\d{3}\s?\d{4}\s?\d{4}\b/g;
+        while ((m = aadhaarRegex.exec(text)) !== null) {
+            if (!items.some(i => i.type === "bank_account" && i.start <= m.index && i.end >= m.index + m[0].length)) {
+                items.push({
+                    type: "aadhaar",
+                    label: "Aadhaar Number",
+                    value: m[0],
+                    category: "identity",
+                    severity: "HIGH",
+                    risk_weight: 35,
+                    start: m.index,
+                    end: m.index + m[0].length
+                });
+            }
+        }
+
+        // 3. PAN Card (5 letters, 4 digits, 1 letter)
         const panRegex = /\b[A-Z]{5}[0-9]{4}[A-Z]\b/g;
         while ((m = panRegex.exec(text)) !== null) {
             items.push({
@@ -75,10 +98,10 @@
             });
         }
 
-        // 3. Payment Card (16 digits with spaces or hyphens)
+        // 4. Payment Card (16 digits with spaces or hyphens)
         const cardRegex = /\b(?:\d{4}[-\s]?){3}\d{4}\b/g;
         while ((m = cardRegex.exec(text)) !== null) {
-            if (!items.some(i => i.type === "aadhaar" && i.start === m.index)) {
+            if (!items.some(i => (i.type === "aadhaar" || i.type === "bank_account") && i.start === m.index)) {
                 items.push({
                     type: "card",
                     label: "Credit / Debit Card",
@@ -92,8 +115,8 @@
             }
         }
 
-        // 4. UPI ID
-        const upiRegex = /\b[a-zA-Z0-9.\-_]{2,64}@(?!bank\b|company\b|example\b)[a-zA-Z0-9.\-_]{2,32}\b/g;
+        // 5. UPI ID (support standard handles like rahul@bank, name@okhdfcbank, user@paytm)
+        const upiRegex = /\b[a-zA-Z0-9.\-_]{2,64}@(?!company\.com|example\.com|gmail\.com|yahoo\.com|outlook\.com)[a-zA-Z0-9.\-_]{2,32}\b/g;
         while ((m = upiRegex.exec(text)) !== null) {
             items.push({
                 type: "upi",
@@ -107,16 +130,31 @@
             });
         }
 
-        // 5. Bank Account Number (explicit account or 9-18 digit patterns)
-        const bankRegex = /\b(?:account|acc|a\/c|bank)[\s#:]*([0-9]{9,18})\b/gi;
-        while ((m = bankRegex.exec(text)) !== null) {
+        // 6. Available Balance (Account Balance)
+        const balanceRegex = /\b(?:available\s+balance|avail\.?\s*bal(?:ance)?|balance)[\s#:]*(?:₹|Rs\.?|INR)?\s?([\d,]+(?:\.\d{2})?)/gi;
+        while ((m = balanceRegex.exec(text)) !== null) {
             items.push({
-                type: "bank_account",
-                label: "Bank Account Number",
-                value: m[1],
+                type: "balance",
+                label: "Account Balance",
+                value: m[0],
                 category: "financial",
                 severity: "HIGH",
-                risk_weight: 30,
+                risk_weight: 25,
+                start: m.index,
+                end: m.index + m[0].length
+            });
+        }
+
+        // 7. Unrelated Personal Transactions
+        const otherTxnRegex = /(?:Amazon|Swiggy|Electricity|Zomato|Flipkart|Netflix)[\s–-]+(?:₹|Rs\.?|INR)\s*[\d,]+(?:\.\d{2})?/gi;
+        while ((m = otherTxnRegex.exec(text)) !== null) {
+            items.push({
+                type: "unrelated_transaction",
+                label: "Unrelated Personal Transaction",
+                value: m[0],
+                category: "financial",
+                severity: "MEDIUM",
+                risk_weight: 15,
                 start: m.index,
                 end: m.index + m[0].length
             });
@@ -156,19 +194,21 @@
             }
         }
 
-        // 8. Financial Amount
+        // 8. Financial Amount (excluding already captured balance and unrelated transactions)
         const amountRegex = /(?:₹|Rs\.?|INR)\s?[\d,]+(?:\.\d{2})?/gi;
         while ((m = amountRegex.exec(text)) !== null) {
-            items.push({
-                type: "amount",
-                label: "Transaction Amount",
-                value: m[0],
-                category: "financial",
-                severity: "LOW",
-                risk_weight: 10,
-                start: m.index,
-                end: m.index + m[0].length
-            });
+            if (!items.some(i => (i.type === "balance" || i.type === "unrelated_transaction") && i.start <= m.index && i.end >= m.index + m[0].length)) {
+                items.push({
+                    type: "amount",
+                    label: "Transaction Amount",
+                    value: m[0],
+                    category: "financial",
+                    severity: "LOW",
+                    risk_weight: 10,
+                    start: m.index,
+                    end: m.index + m[0].length
+                });
+            }
         }
 
         return items;

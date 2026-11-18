@@ -1152,19 +1152,22 @@ function initInteractiveSandbox() {
                 const purposeData = await purposeResp.json();
                 const recommendations = purposeData.recommendations || [];
 
-                // Render dynamic KEEP vs PROTECT tags
+                // Render dynamic KEEP vs PROTECT tags (deduplicated by label to prevent repeating tags)
                 const keepList = recommendations.filter(r => r.decision === "KEEP");
                 const protectList = recommendations.filter(r => r.decision === "PROTECT");
 
+                const uniqueKeep = Array.from(new Set(keepList.map(r => r.label)));
+                const uniqueProtect = Array.from(new Set(protectList.map(r => r.label)));
+
                 if (keepItemsEl) {
-                    keepItemsEl.innerHTML = keepList.length > 0
-                        ? keepList.map(r => `<span class="decision-item-tag keep-tag">✓ ${escapeHtml(r.label)}</span>`).join(" ")
+                    keepItemsEl.innerHTML = uniqueKeep.length > 0
+                        ? uniqueKeep.map(label => `<span class="decision-item-tag keep-tag">✓ ${escapeHtml(label)}</span>`).join(" ")
                         : `<span style="font-size: 0.74rem; color: var(--muted);">None strictly required</span>`;
                 }
 
                 if (protectItemsEl) {
-                    protectItemsEl.innerHTML = protectList.length > 0
-                        ? protectList.map(r => `<span class="decision-item-tag protect-tag">🔒 ${escapeHtml(r.label)}</span>`).join(" ")
+                    protectItemsEl.innerHTML = uniqueProtect.length > 0
+                        ? uniqueProtect.map(label => `<span class="decision-item-tag protect-tag">🔒 ${escapeHtml(label)}</span>`).join(" ")
                         : `<span style="font-size: 0.74rem; color: #10b981;">No sensitive data to protect</span>`;
                 }
 
@@ -1180,6 +1183,9 @@ function initInteractiveSandbox() {
                 }
                 if (afterPreview) {
                     afterPreview.innerHTML = `<span style="color: var(--muted); font-style: italic;">Click '⚡ 2. Apply Expense Minimization' to see PrivacyGuard redact unnecessary data and generate an integrity receipt.</span>`;
+                }
+                if (riskAfterLabel) {
+                    riskAfterLabel.textContent = "Risk: -- (Pending)";
                 }
                 if (statsStrip) statsStrip.style.display = "none";
                 if (successBanner) successBanner.style.display = "none";
@@ -1214,7 +1220,11 @@ function initInteractiveSandbox() {
             }
 
             if (riskAfterLabel) {
-                riskAfterLabel.textContent = `Risk: ${protectResult.risk_after} (SAFE)`;
+                const afterScore = (protectResult && typeof protectResult.risk_after === "number")
+                    ? protectResult.risk_after
+                    : 15;
+                const afterLevel = afterScore >= 70 ? "HIGH" : (afterScore >= 40 ? "MEDIUM" : "SAFE");
+                riskAfterLabel.textContent = `Risk: ${afterScore} (${afterLevel})`;
             }
 
             if (expReductionEl) {
@@ -1225,10 +1235,13 @@ function initInteractiveSandbox() {
                 protCountEl.textContent = `${protectResult.protected_count} items protected (${protectResult.kept_count} kept)`;
             }
 
-            if (receiptHashEl && protectResult.protection_receipt) {
-                const fullHash = protectResult.protection_receipt.hash;
-                receiptHashEl.textContent = `${fullHash.slice(0, 8)}...${fullHash.slice(-5)}`;
-                receiptHashEl.title = `Full SHA-256 Receipt: ${fullHash}`;
+            const receiptObj = protectResult.protection_receipt || protectResult.receipt;
+            if (receiptHashEl && receiptObj) {
+                const fullHash = receiptObj.hash || receiptObj.sha256 || "";
+                if (fullHash) {
+                    receiptHashEl.textContent = `${fullHash.slice(0, 8)}...${fullHash.slice(-5)}`;
+                    receiptHashEl.title = `Full SHA-256 Receipt: ${fullHash}`;
+                }
             }
 
             if (statsStrip) statsStrip.style.display = "flex";

@@ -199,24 +199,45 @@ function detectPII(text) {
     if (!text || typeof text !== "string") return [];
     const items = [];
 
-    // Aadhaar
-    const aadhaarRegex = /\b[2-9]\d{3}\s?\d{4}\s?\d{4}\b/g;
+    // 1. Bank Account Number (explicit account or 9-18 digit patterns, with optional spaces or dashes)
+    // Run BEFORE Aadhaar so 12-digit bank accounts are prioritized as financial bank accounts
+    const bankRegex = /\b(?:bank\s*(?:account|acc|a\/c)?|account|acc|a\/c)[\s#:]*([0-9]{4}[\s-]?[0-9]{4}[\s-]?[0-9]{3,8}|[0-9]{9,18})\b/gi;
     let m;
-    while ((m = aadhaarRegex.exec(text)) !== null) {
+    while ((m = bankRegex.exec(text)) !== null) {
+        const val = m[1];
+        const valStart = m.index + m[0].indexOf(val);
         items.push({
-            type: "aadhaar",
-            label: "Aadhaar Number",
-            value: m[0],
-            category: "identity",
+            type: "bank_account",
+            label: "Bank Account Number",
+            value: val,
+            category: "financial",
             severity: "HIGH",
-            risk_weight: 35,
-            start: m.index,
-            end: m.index + m[0].length,
+            risk_weight: 30,
+            start: valStart,
+            end: valStart + val.length,
             valid: true
         });
     }
 
-    // PAN Card
+    // 2. Aadhaar (12 digits with optional spaces, excluding bank account spans)
+    const aadhaarRegex = /\b[2-9]\d{3}\s?\d{4}\s?\d{4}\b/g;
+    while ((m = aadhaarRegex.exec(text)) !== null) {
+        if (!items.some(i => i.type === "bank_account" && i.start <= m.index && i.end >= m.index + m[0].length)) {
+            items.push({
+                type: "aadhaar",
+                label: "Aadhaar Number",
+                value: m[0],
+                category: "identity",
+                severity: "HIGH",
+                risk_weight: 35,
+                start: m.index,
+                end: m.index + m[0].length,
+                valid: true
+            });
+        }
+    }
+
+    // 3. PAN Card
     const panRegex = /\b[A-Z]{5}[0-9]{4}[A-Z]\b/g;
     while ((m = panRegex.exec(text)) !== null) {
         items.push({
@@ -232,10 +253,10 @@ function detectPII(text) {
         });
     }
 
-    // Payment Card
+    // 4. Payment Card
     const cardRegex = /\b(?:\d{4}[-\s]?){3}\d{4}\b/g;
     while ((m = cardRegex.exec(text)) !== null) {
-        if (!items.some(i => i.type === "aadhaar" && i.start === m.index)) {
+        if (!items.some(i => (i.type === "aadhaar" || i.type === "bank_account") && i.start === m.index)) {
             items.push({
                 type: "card",
                 label: "Credit / Debit Card",
@@ -250,8 +271,8 @@ function detectPII(text) {
         }
     }
 
-    // UPI ID
-    const upiRegex = /\b[a-zA-Z0-9.\-_]{2,64}@(?!bank\b|company\b|example\b)[a-zA-Z0-9.\-_]{2,32}\b/g;
+    // 5. UPI ID (support standard handles like rahul@bank, rahul@okhdfcbank, user@paytm)
+    const upiRegex = /\b[a-zA-Z0-9.\-_]{2,64}@(?!company\.com|example\.com|gmail\.com|yahoo\.com|outlook\.com)[a-zA-Z0-9.\-_]{2,32}\b/g;
     while ((m = upiRegex.exec(text)) !== null) {
         items.push({
             type: "upi",
@@ -266,23 +287,40 @@ function detectPII(text) {
         });
     }
 
-    // Bank Account Number
-    const bankRegex = /\b(?:account|acc|a\/c|bank)[\s#:]*([0-9]{9,18})\b/gi;
-    while ((m = bankRegex.exec(text)) !== null) {
+    // 6. Available Balance (Account Balance)
+    const balanceRegex = /\b(?:available\s+balance|avail\.?\s*bal(?:ance)?|balance)[\s#:]*(?:₹|Rs\.?|INR)?\s?([\d,]+(?:\.\d{2})?)/gi;
+    while ((m = balanceRegex.exec(text)) !== null) {
+        const val = m[0];
         items.push({
-            type: "bank_account",
-            label: "Bank Account Number",
-            value: m[1],
+            type: "balance",
+            label: "Account Balance",
+            value: val,
             category: "financial",
             severity: "HIGH",
-            risk_weight: 30,
+            risk_weight: 25,
+            start: m.index,
+            end: m.index + val.length,
+            valid: true
+        });
+    }
+
+    // 7. Unrelated Personal Transactions (e.g., Amazon, Swiggy, Electricity on statements)
+    const otherTxnRegex = /(?:Amazon|Swiggy|Electricity|Zomato|Flipkart|Netflix)[\s–-]+(?:₹|Rs\.?|INR)\s*[\d,]+(?:\.\d{2})?/gi;
+    while ((m = otherTxnRegex.exec(text)) !== null) {
+        items.push({
+            type: "unrelated_transaction",
+            label: "Unrelated Personal Transaction",
+            value: m[0],
+            category: "financial",
+            severity: "MEDIUM",
+            risk_weight: 15,
             start: m.index,
             end: m.index + m[0].length,
             valid: true
         });
     }
 
-    // Phone Number
+    // 8. Phone Number
     const phoneRegex = /(?:\+91[\-\s]?)?[6-9]\d{9}\b/g;
     while ((m = phoneRegex.exec(text)) !== null) {
         if (!items.some(i => i.start <= m.index && i.end >= m.index + m[0].length)) {
@@ -300,7 +338,7 @@ function detectPII(text) {
         }
     }
 
-    // Email Address
+    // 9. Email Address
     const emailRegex = /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b/g;
     while ((m = emailRegex.exec(text)) !== null) {
         if (!items.some(i => i.type === "upi" && i.start === m.index)) {
@@ -318,20 +356,22 @@ function detectPII(text) {
         }
     }
 
-    // Financial Amount
+    // 10. Financial Amount (excluding already captured balance and unrelated transactions)
     const amountRegex = /(?:₹|Rs\.?|INR)\s?[\d,]+(?:\.\d{2})?/gi;
     while ((m = amountRegex.exec(text)) !== null) {
-        items.push({
-            type: "amount",
-            label: "Transaction Amount",
-            value: m[0],
-            category: "financial",
-            severity: "LOW",
-            risk_weight: 10,
-            start: m.index,
-            end: m.index + m[0].length,
-            valid: true
-        });
+        if (!items.some(i => (i.type === "balance" || i.type === "unrelated_transaction") && i.start <= m.index && i.end >= m.index + m[0].length)) {
+            items.push({
+                type: "amount",
+                label: "Transaction Amount",
+                value: m[0],
+                category: "financial",
+                severity: "LOW",
+                risk_weight: 10,
+                start: m.index,
+                end: m.index + m[0].length,
+                valid: true
+            });
+        }
     }
 
     return items;
@@ -403,14 +443,26 @@ function redactText(text, detected, decisions) {
         ? Math.round((protected_count / detected.length) * 100)
         : 100;
 
+    // Calculate risk_after for kept items
+    const remainingItems = (detected || []).filter(item => {
+        const d = (decisions && decisions[item.type]) || "PROTECT";
+        return d === "KEEP";
+    });
+    const risk_after = calculateRisk(remainingItems).score;
+
     return {
         success: true,
         protected_text: result,
         protected_count,
         kept_count,
         exposure_reduction,
+        risk_after,
         receipt: {
             sha256,
+            timestamp: new Date().toISOString()
+        },
+        protection_receipt: {
+            hash: sha256,
             timestamp: new Date().toISOString()
         }
     };
@@ -782,5 +834,10 @@ if (require.main === module) {
         console.log("====================================================");
     });
 }
+
+server.detectPII = detectPII;
+server.calculateRisk = calculateRisk;
+server.analyzePurpose = analyzePurpose;
+server.redactText = redactText;
 
 module.exports = server;

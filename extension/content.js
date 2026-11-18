@@ -1,6 +1,6 @@
 /**
  * PrivacyGuard — Universal Content Script (Manifest V3)
- * Injected on ALL web pages (<all_urls>) to provide continuous, live,
+ * Injected on web pages to provide continuous, live,
  * real-time personal data leak prevention.
  *
  * Capabilities:
@@ -11,13 +11,31 @@
  * 5. Direct 1-Click Form Redaction with simulated synthetic events for React/Vue/Angular.
  * 6. Form Submission Protection Guard against accidental PII leaks.
  *
- * ZERO external cloud AI calls.
- * ZERO raw PII storage.
+ * Excludes: Internal Auth Modals, Password fields, and Static Landing Demo Cards.
  */
 
 (function () {
     if (window.__privacyGuardUniversalInjected) return;
     window.__privacyGuardUniversalInjected = true;
+
+    // Helper: Determine if an element should be ignored by the PII scanner
+    function isIgnoredElement(el) {
+        if (!el || !(el instanceof Element)) return true;
+        // Never scan passwords, hidden inputs, or buttons
+        if (el.type === "password" || el.type === "hidden" || el.type === "submit" || el.type === "button") return true;
+        // Never scan inside PrivacyGuard's own UI or Auth modal
+        if (el.closest && (
+            el.closest("#privacyguard-live-root") ||
+            el.closest("#pgAuthOverlay") ||
+            el.closest(".pg-auth-card") ||
+            el.closest(".mockup-stage") ||
+            el.closest(".scanner-card")
+        )) return true;
+        // Never scan elements marked with pg IDs or ignore flags
+        if (el.id && el.id.startsWith("pg")) return true;
+        if (el.getAttribute("data-pg-ignore") === "true") return true;
+        return false;
+    }
 
     // ========================================================================
     // 1. DETERMINISTIC CLIENT-SIDE REGEX ENGINE (Instant <5ms on-page detection)
@@ -218,7 +236,7 @@
             line-height: 1.4;
         `;
 
-        // 1. Floating Pill Badge
+        // Floating Pill Badge
         floatingBadge = document.createElement("div");
         floatingBadge.id = "privacyguard-live-pill";
         floatingBadge.style.cssText = `
@@ -242,7 +260,7 @@
             <span id="pg-badge-label">PrivacyGuard Active</span>
         `;
 
-        // 2. Interactive Redaction Flyout Panel
+        // Interactive Redaction Flyout Panel
         floatingPanel = document.createElement("div");
         floatingPanel.id = "privacyguard-live-panel";
         floatingPanel.style.cssText = `
@@ -289,7 +307,7 @@
             </div>
 
             <div style="display: flex; gap: 8px;">
-                <button id="pg-redact-now-btn" style="flex: 1; background: linear-gradient(135deg, #4f46e5 0%, #4338ca 100%); color: white; border: none; padding: 10px 14px; border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 12.5px; transition: transform 0.1s ease;">
+                <button id="pg-redact-now-btn" style="flex: 1; background: linear-gradient(135deg, #4f46e5 0%, #4338ca 100%); color: white; border: none; padding: 10px 14px; border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 12.5px;">
                     🛡️ Protect &amp; Redact
                 </button>
                 <button id="pg-dismiss-btn" style="background: rgba(255,255,255,0.08); color: #cbd5e1; border: 1px solid rgba(255,255,255,0.1); padding: 10px 12px; border-radius: 8px; cursor: pointer; font-size: 12px;">
@@ -346,16 +364,13 @@
             label.textContent = "PrivacyGuard Active";
         }
 
-        // Notify background service worker to update browser toolbar badge icon
         try {
             chrome.runtime.sendMessage({
                 type: "UPDATE_BADGE",
                 count: count,
                 riskScore: score
             });
-        } catch (e) {
-            // Extension context may be reloading
-        }
+        } catch (e) {}
     }
 
     function updatePanelDetails() {
@@ -364,7 +379,7 @@
         const listEl = document.getElementById("pg-detected-list");
 
         if (currentDetected.length === 0) {
-            statusEl.innerHTML = `<span style="color:#10b981; font-weight:600;">✓ No sensitive PII detected on this page.</span>`;
+            statusEl.innerHTML = `<span style="color:#10b981; font-weight:600;">✓ No sensitive PII detected in active forms.</span>`;
             listEl.innerHTML = `<div style="color:#94a3b8; font-size:11.5px; padding: 8px 0;">All inputs and forms are clean.</div>`;
             return;
         }
@@ -389,10 +404,10 @@
     // ========================================================================
     function executeFormProtection() {
         let targetEl = activeInputTarget;
-        if (!targetEl) {
-            // Pick largest input/textarea containing detected PII
+        if (!targetEl || isIgnoredElement(targetEl)) {
             const candidates = document.querySelectorAll("textarea, input[type='text'], [contenteditable='true']");
             for (const el of candidates) {
+                if (isIgnoredElement(el)) continue;
                 const val = el.value || el.innerText || "";
                 if (localDetectPII(val).length > 0) {
                     targetEl = el;
@@ -410,9 +425,8 @@
         const purposeSelect = document.getElementById("pg-purpose-select");
         const purpose = purposeSelect ? purposeSelect.value : "expense_reimbursement";
 
-        const { protectedText, protectedCount, exposureReduction } = localRedact(rawText, currentDetected, purpose);
+        const { protectedText, exposureReduction } = localRedact(rawText, currentDetected, purpose);
 
-        // Update DOM element directly
         if (targetEl.value !== undefined) {
             targetEl.value = protectedText;
             targetEl.dispatchEvent(new Event("input", { bubbles: true }));
@@ -422,13 +436,11 @@
             targetEl.dispatchEvent(new Event("input", { bubbles: true }));
         }
 
-        // Re-evaluate
         currentDetected = localDetectPII(protectedText);
         currentRisk = calculateLocalRisk(currentDetected);
         updateBadgeDisplay(currentDetected.length, currentRisk.score, currentRisk.level);
         updatePanelDetails();
 
-        // Flash success
         const btn = document.getElementById("pg-redact-now-btn");
         if (btn) {
             btn.textContent = `✓ Protected (${exposureReduction}% Redacted)`;
@@ -447,7 +459,9 @@
     let scanDebounceTimer = null;
 
     function evaluateText(text, sourceElement = null) {
+        if (sourceElement && isIgnoredElement(sourceElement)) return;
         if (sourceElement) activeInputTarget = sourceElement;
+
         const detected = localDetectPII(text);
         const risk = calculateLocalRisk(detected);
 
@@ -465,6 +479,7 @@
         let combinedText = "";
 
         inputs.forEach(el => {
+            if (isIgnoredElement(el)) return;
             const val = el.value !== undefined ? el.value : (el.innerText || "");
             if (val.trim()) {
                 const itemHits = localDetectPII(val);
@@ -478,17 +493,20 @@
         if (combinedText) {
             evaluateText(combinedText, activeInputTarget);
         } else {
+            currentDetected = [];
+            currentRisk = { score: 0, level: "LOW" };
             updateBadgeDisplay(0, 0, "LOW");
         }
     }
 
     function attachInputListeners(el) {
-        if (!el || monitoredElements.has(el)) return;
+        if (!el || isIgnoredElement(el) || monitoredElements.has(el)) return;
         monitoredElements.add(el);
 
         const handleInput = () => {
             clearTimeout(scanDebounceTimer);
             scanDebounceTimer = setTimeout(() => {
+                if (isIgnoredElement(el)) return;
                 const text = el.value !== undefined ? el.value : (el.innerText || "");
                 evaluateText(text, el);
             }, 120);
@@ -499,6 +517,7 @@
         el.addEventListener("paste", () => setTimeout(handleInput, 50));
         el.addEventListener("change", handleInput);
         el.addEventListener("focus", () => {
+            if (isIgnoredElement(el)) return;
             activeInputTarget = el;
             const text = el.value !== undefined ? el.value : (el.innerText || "");
             if (text) evaluateText(text, el);
@@ -506,25 +525,26 @@
     }
 
     function observePageMutations() {
-        // Scan elements already on the page immediately
         const initialInputs = document.querySelectorAll("textarea, input[type='text'], input:not([type]), [contenteditable='true']");
         initialInputs.forEach(attachInputListeners);
         checkActiveForms();
 
-        // Observe dynamically inserted inputs (e.g. Gmail compose, Twitter compose modal, ChatGPT textarea)
         const observer = new MutationObserver((mutations) => {
             let foundNew = false;
             for (const mutation of mutations) {
                 for (const node of mutation.addedNodes) {
                     if (node.nodeType === Node.ELEMENT_NODE) {
+                        if (isIgnoredElement(node)) continue;
                         if (node.matches && node.matches("textarea, input[type='text'], [contenteditable='true']")) {
                             attachInputListeners(node);
                             foundNew = true;
                         } else if (node.querySelectorAll) {
                             const children = node.querySelectorAll("textarea, input[type='text'], [contenteditable='true']");
                             children.forEach(c => {
-                                attachInputListeners(c);
-                                foundNew = true;
+                                if (!isIgnoredElement(c)) {
+                                    attachInputListeners(c);
+                                    foundNew = true;
+                                }
                             });
                         }
                     }
@@ -544,20 +564,25 @@
     // ========================================================================
     function setupSubmitInterceptor() {
         document.addEventListener("click", (e) => {
+            // NEVER intercept inside PrivacyGuard auth modal or internal UI
+            if (e.target.closest && (
+                e.target.closest("#pgAuthOverlay") ||
+                e.target.closest(".pg-auth-card") ||
+                e.target.closest("#privacyguard-live-root")
+            )) {
+                return;
+            }
+
             const btn = e.target.closest("button, input[type='submit'], .btn-send");
             if (!btn) return;
 
-            // Check if clicking inside PrivacyGuard widget
-            if (floatingRoot && floatingRoot.contains(btn)) return;
-
-            // Check if there is active high-risk unredacted PII in forms
+            // Only intercept third-party form submissions when real user forms hold high-risk PII
             if (currentDetected && currentDetected.length > 0 && currentRisk.score >= 40) {
                 const hasHighRisk = currentDetected.some(i => i.severity === "HIGH");
                 if (hasHighRisk) {
                     e.preventDefault();
                     e.stopPropagation();
 
-                    // Open PrivacyGuard panel to give user opportunity to sanitize
                     createFloatingUI();
                     floatingPanel.style.display = "block";
                     updatePanelDetails();
@@ -581,12 +606,13 @@
     chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         if (message.type === "GET_PAGE_TEXT") {
             let text = "";
-            if (activeInputTarget) {
+            if (activeInputTarget && !isIgnoredElement(activeInputTarget)) {
                 text = activeInputTarget.value !== undefined ? activeInputTarget.value : (activeInputTarget.innerText || "");
             }
             if (!text || !text.trim()) {
                 const textareas = Array.from(document.querySelectorAll("textarea, [contenteditable='true']"));
                 for (const ta of textareas) {
+                    if (isIgnoredElement(ta)) continue;
                     const val = ta.value !== undefined ? ta.value : (ta.innerText || "");
                     if (val.trim().length > text.trim().length) {
                         text = val;
@@ -603,7 +629,7 @@
         }
 
         if (message.type === "REPLACE_PAGE_TEXT") {
-            if (activeInputTarget && message.protectedText) {
+            if (activeInputTarget && message.protectedText && !isIgnoredElement(activeInputTarget)) {
                 if (activeInputTarget.value !== undefined) {
                     activeInputTarget.value = message.protectedText;
                     activeInputTarget.dispatchEvent(new Event("input", { bubbles: true }));
@@ -627,7 +653,6 @@
         createFloatingUI();
         observePageMutations();
         setupSubmitInterceptor();
-        // Run immediate scan of forms on load
         setTimeout(checkActiveForms, 300);
     }
 

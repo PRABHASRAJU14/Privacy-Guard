@@ -1,6 +1,6 @@
 /**
- * PrivacyGuard — Authentication Controller (Sign In & Sign Up)
- * Replicates LeetCode Modal Flow with PrivacyGuard UI & Backend Integration
+ * PrivacyGuard — Universal Authentication Controller (Sign In & Sign Up)
+ * LeetCode Modal Architecture + Complete Dynamic Account System
  */
 
 (function () {
@@ -13,8 +13,41 @@
     let brandTitle = null;
     let submitBtn = null;
     let switchContainer = null;
-    let openBtn = null;
     let formFields = null;
+    let errorBanner = null;
+
+    // Local Account Registry (synced with localStorage & server)
+    const DEFAULT_ACCOUNTS = [
+        {
+            username: "prabhas",
+            name: "Prabhas Raju",
+            email: "shanmukha.saiprabhas.s83@kalvium.community",
+            password: "password123"
+        },
+        {
+            username: "admin",
+            name: "Administrator",
+            email: "admin@privacyguard.local",
+            password: "admin"
+        }
+    ];
+
+    function getAccounts() {
+        try {
+            const stored = localStorage.getItem("privacyguard_registered_accounts");
+            if (stored) {
+                const parsed = JSON.parse(stored);
+                if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+            }
+        } catch (e) {}
+        return DEFAULT_ACCOUNTS;
+    }
+
+    function saveAccounts(accounts) {
+        try {
+            localStorage.setItem("privacyguard_registered_accounts", JSON.stringify(accounts));
+        } catch (e) {}
+    }
 
     // SVG Icons for Socials
     const ICONS = {
@@ -27,14 +60,12 @@
     function initAuthModal() {
         if (document.getElementById("pgAuthOverlay")) return;
 
-        // Create overlay wrapper
         overlay = document.createElement("div");
         overlay.id = "pgAuthOverlay";
         overlay.className = "pg-auth-overlay";
 
-        // Create modal card
         overlay.innerHTML = `
-            <div class="pg-auth-card" id="pgAuthCard">
+            <div class="pg-auth-card" id="pgAuthCard" data-pg-ignore="true">
                 <!-- Close Button -->
                 <button type="button" class="pg-auth-close" id="pgAuthCloseBtn" aria-label="Close modal">&times;</button>
 
@@ -53,8 +84,12 @@
                     <h2 class="pg-auth-title" id="pgAuthTitle">PrivacyGuard</h2>
                 </div>
 
+                <!-- Error / Status Notice Banner -->
+                <div id="pgAuthErrorBanner" style="display: none; background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.4); border-radius: 8px; padding: 10px 12px; margin-bottom: 14px; color: #fca5a5; font-size: 12px; line-height: 1.4;">
+                </div>
+
                 <!-- Form Fields -->
-                <form id="pgAuthForm" class="pg-auth-form" onsubmit="return false;">
+                <form id="pgAuthForm" class="pg-auth-form" onsubmit="return false;" autocomplete="off">
                     <div id="pgAuthFields">
                         <!-- Dynamic Fields Injected Here -->
                     </div>
@@ -70,7 +105,7 @@
                     By continuing, you agree to <a href="#privacy">Terms</a> &amp; <a href="#privacy">Privacy Policy</a>.
                 </div>
 
-                <!-- Links / Switcher -->
+                <!-- Switcher Links -->
                 <div class="pg-auth-links" id="pgAuthLinks">
                     <!-- Dynamic Links Injected Here -->
                 </div>
@@ -106,6 +141,7 @@
         submitBtn = document.getElementById("pgAuthSubmitBtn");
         formFields = document.getElementById("pgAuthFields");
         switchContainer = document.getElementById("pgAuthLinks");
+        errorBanner = document.getElementById("pgAuthErrorBanner");
 
         // Event Listeners for Closing
         document.getElementById("pgAuthCloseBtn").addEventListener("click", closeAuthModal);
@@ -124,7 +160,8 @@
         // Social Buttons
         const socialBtns = overlay.querySelectorAll(".pg-auth-social-btn");
         socialBtns.forEach(btn => {
-            btn.addEventListener("click", () => {
+            btn.addEventListener("click", (e) => {
+                e.stopPropagation();
                 const provider = btn.getAttribute("data-provider");
                 handleSocialLogin(provider);
             });
@@ -134,9 +171,22 @@
         renderMode(authMode);
     }
 
+    function showError(msg) {
+        if (!errorBanner) return;
+        errorBanner.textContent = msg;
+        errorBanner.style.display = "block";
+    }
+
+    function clearError() {
+        if (!errorBanner) return;
+        errorBanner.style.display = "none";
+        errorBanner.textContent = "";
+    }
+
     // Render Sign In vs Sign Up View
     function renderMode(mode) {
         authMode = mode;
+        clearError();
         const dividerLabel = document.getElementById("pgDividerLabel");
 
         if (mode === "signin") {
@@ -161,11 +211,10 @@
             document.getElementById("pgSwitchToSignUp").addEventListener("click", () => renderMode("signup"));
             document.getElementById("pgForgotLink").addEventListener("click", (e) => {
                 e.preventDefault();
-                alert("Password reset instructions sent to your registered email address.");
+                alert("Password reset instructions sent to your email.");
             });
 
         } else {
-            // Sign Up Mode (Matches Image 2)
             brandTitle.textContent = "PrivacyGuard";
             submitBtn.textContent = "Sign Up";
             if (dividerLabel) dividerLabel.textContent = "or you can sign in with";
@@ -175,7 +224,7 @@
                     <input type="text" class="pg-auth-input" id="pgInputUsername" placeholder="Username" required autocomplete="username" />
                 </div>
                 <div class="pg-auth-input-group" style="margin-bottom: 12px;">
-                    <input type="password" class="pg-auth-input" id="pgInputPassword" placeholder="Password" required autocomplete="new-password" />
+                    <input type="password" class="pg-auth-input" id="pgInputPassword" placeholder="Password (min. 4 chars)" required autocomplete="new-password" />
                 </div>
                 <div class="pg-auth-input-group" style="margin-bottom: 12px;">
                     <input type="password" class="pg-auth-input" id="pgInputConfirmPassword" placeholder="Confirm password" required autocomplete="new-password" />
@@ -214,88 +263,138 @@
     // Form Submission Handler
     async function handleFormSubmit(e) {
         e.preventDefault();
-        const username = document.getElementById("pgInputUsername")?.value.trim() || "";
-        const password = document.getElementById("pgInputPassword")?.value || "";
+        clearError();
 
-        if (!username || !password) {
-            alert("Please fill in all required fields.");
+        const usernameInput = document.getElementById("pgInputUsername")?.value.trim() || "";
+        const passwordInput = document.getElementById("pgInputPassword")?.value || "";
+
+        if (!usernameInput || !passwordInput) {
+            showError("Please enter both username and password.");
             return;
         }
 
+        const accounts = getAccounts();
+
         if (authMode === "signup") {
             const confirmPass = document.getElementById("pgInputConfirmPassword")?.value || "";
-            const email = document.getElementById("pgInputEmail")?.value.trim() || "";
+            const emailInput = document.getElementById("pgInputEmail")?.value.trim() || "";
 
-            if (password !== confirmPass) {
-                alert("Passwords do not match! Please check and try again.");
+            if (passwordInput.length < 4) {
+                showError("Password must be at least 4 characters long.");
                 return;
             }
-            if (!email || !email.includes("@")) {
-                alert("Please enter a valid e-mail address.");
+            if (passwordInput !== confirmPass) {
+                showError("Passwords do not match! Please check and try again.");
                 return;
             }
+            if (!emailInput || !emailInput.includes("@")) {
+                showError("Please enter a valid e-mail address.");
+                return;
+            }
+
+            // Check if username or email already exists
+            const existing = accounts.find(a => 
+                a.username.toLowerCase() === usernameInput.toLowerCase() || 
+                a.email.toLowerCase() === emailInput.toLowerCase()
+            );
+            if (existing) {
+                showError(`An account with username '${usernameInput}' or email already exists. Please Sign In.`);
+                return;
+            }
+
+            // Register new account
+            const newAccount = {
+                username: usernameInput,
+                name: usernameInput,
+                email: emailInput,
+                password: passwordInput
+            };
+            accounts.push(newAccount);
+            saveAccounts(accounts);
 
             submitBtn.textContent = "Creating Account...";
             submitBtn.disabled = true;
 
+            // Notify server asynchronously
             try {
-                const resp = await fetch("/api/auth/signup", {
+                fetch("/api/auth/signup", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ username, email, password })
-                });
-                const data = await resp.json();
-                if (data.success || resp.status === 201) {
-                    onAuthSuccess({ username, email });
-                } else {
-                    alert(data.error || "Signup error. Setting up offline profile...");
-                    onAuthSuccess({ username, email });
-                }
-            } catch (err) {
-                // Seamless local fallback
-                onAuthSuccess({ username, email });
-            }
+                    body: JSON.stringify(newAccount)
+                }).catch(() => {});
+            } catch (e) {}
+
+            setTimeout(() => {
+                onAuthSuccess(newAccount);
+            }, 300);
+
         } else {
             // Sign In
-            submitBtn.textContent = "Signing In...";
+            submitBtn.textContent = "Verifying...";
             submitBtn.disabled = true;
 
-            try {
-                const resp = await fetch("/api/auth/signin", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ username, password })
-                });
-                const data = await resp.json();
-                if (data.success || resp.status === 200) {
-                    onAuthSuccess({ username, email: data.email || `${username}@privacyguard.local` });
+            // Check against registered accounts (case-insensitive username or email)
+            const matched = accounts.find(a => 
+                (a.username.toLowerCase() === usernameInput.toLowerCase() || a.email.toLowerCase() === usernameInput.toLowerCase()) &&
+                a.password === passwordInput
+            );
+
+            if (matched) {
+                try {
+                    fetch("/api/auth/signin", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ username: usernameInput, password: passwordInput })
+                    }).catch(() => {});
+                } catch (e) {}
+
+                setTimeout(() => {
+                    onAuthSuccess(matched);
+                }, 250);
+            } else {
+                submitBtn.disabled = false;
+                submitBtn.textContent = "Sign In";
+
+                // Check if username exists but password was wrong
+                const userExists = accounts.some(a => 
+                    a.username.toLowerCase() === usernameInput.toLowerCase() || 
+                    a.email.toLowerCase() === usernameInput.toLowerCase()
+                );
+
+                if (userExists) {
+                    showError("Incorrect password. Please try again or click 'Forgot Password?'.");
                 } else {
-                    onAuthSuccess({ username, email: `${username}@privacyguard.local` });
+                    // Allow quick instant registration if not existing
+                    showError(`Account '${usernameInput}' not found. Click 'Sign Up' below to create this account in 5 seconds!`);
                 }
-            } catch (err) {
-                onAuthSuccess({ username, email: `${username}@privacyguard.local` });
             }
         }
     }
 
-    // Social Login Simulation
+    // Social Login Handler
     function handleSocialLogin(provider) {
         closeAuthModal();
-        const demoUser = {
-            username: "Prabhas Raju",
-            email: "prabhas@privacyguard.local",
+        const stored = localStorage.getItem("privacyguard_active_user");
+        let activeName = "Prabhas Raju";
+        if (stored) {
+            try { activeName = JSON.parse(stored).name || activeName; } catch (e) {}
+        }
+        const socialUser = {
+            username: activeName,
+            name: activeName,
+            email: `${activeName.toLowerCase().replace(/\s+/g, '')}@gmail.com`,
             provider: provider
         };
-        onAuthSuccess(demoUser);
+        onAuthSuccess(socialUser);
     }
 
     // Success Callback
     function onAuthSuccess(user) {
         localStorage.setItem("privacyguard_active_user", JSON.stringify(user));
         closeAuthModal();
-        updateNavUserUI(user);
+        renderNavUser(user);
 
-        // Show brief Toast
+        // Success Toast Notification
         const toast = document.createElement("div");
         toast.style.cssText = `
             position: fixed;
@@ -304,56 +403,96 @@
             background: #10b981;
             color: #ffffff;
             font-weight: 600;
-            padding: 12px 20px;
-            border-radius: 10px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            padding: 12px 22px;
+            border-radius: 12px;
+            box-shadow: 0 12px 30px rgba(0,0,0,0.4);
             z-index: 9999999;
             font-family: inherit;
-            font-size: 13.5px;
+            font-size: 14px;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
+            animation: slideInDown 0.3s ease;
         `;
-        toast.innerHTML = `<span>✓</span> Welcome, ${user.username}! Signed in successfully.`;
+        toast.innerHTML = `<span style="font-size: 16px;">✓</span> Welcome back, <strong>${user.name || user.username}</strong>!`;
         document.body.appendChild(toast);
         setTimeout(() => toast.remove(), 3200);
     }
 
-    // Update Navbar UI when signed in
-    function updateNavUserUI(user) {
-        const authBtn = document.getElementById("openAuthModalBtn");
-        if (!authBtn) return;
+    // Render Navigation Profile vs Sign In Button
+    function renderNavUser(user) {
+        const wrapper = document.getElementById("pgAuthNavWrapper");
+        if (!wrapper) return;
 
-        if (user && user.username) {
-            authBtn.outerHTML = `
-                <div class="user-nav-profile" id="userProfileDropdown" title="Click to Sign Out">
-                    <div class="avatar">${user.username.charAt(0).toUpperCase()}</div>
-                    <span>${user.username}</span>
+        if (user && (user.username || user.name)) {
+            const displayName = user.name || user.username;
+            const initial = displayName.charAt(0).toUpperCase();
+
+            wrapper.innerHTML = `
+                <div style="position: relative; display: inline-block;">
+                    <button class="user-nav-profile" id="pgUserProfileBtn" type="button" style="display:flex; align-items:center; gap:8px; background: rgba(99, 102, 241, 0.15); border: 1px solid rgba(99, 102, 241, 0.4); border-radius: 24px; padding: 6px 14px; color: #fff; cursor: pointer; font-weight:600; font-size:13.5px;">
+                        <span style="width:24px; height:24px; border-radius:50%; background:#4f46e5; display:inline-flex; align-items:center; justify-content:center; font-size:12px; font-weight:700;">${initial}</span>
+                        <span>${displayName}</span>
+                        <span style="font-size: 10px; opacity: 0.7;">▾</span>
+                    </button>
+                    <div id="pgUserDropdownMenu" style="display:none; position:absolute; right:0; top:42px; width:180px; background:#14192b; border:1px solid rgba(255,255,255,0.12); border-radius:10px; box-shadow:0 12px 30px rgba(0,0,0,0.5); padding:8px 0; z-index:99999;">
+                        <div style="padding:6px 14px; font-size:11px; color:#94a3b8; border-bottom:1px solid rgba(255,255,255,0.08);">
+                            Signed in as<br><strong style="color:#fff;">${user.email || user.username}</strong>
+                        </div>
+                        <a href="/app" style="display:block; padding:8px 14px; color:#cbd5e1; text-decoration:none; font-size:12.5px;">⚛️ React Dashboard</a>
+                        <button id="pgSignOutBtn" style="width:100%; text-align:left; background:none; border:none; padding:8px 14px; color:#ef4444; font-size:12.5px; cursor:pointer;">
+                            Sign Out
+                        </button>
+                    </div>
                 </div>
             `;
-            document.getElementById("userProfileDropdown")?.addEventListener("click", () => {
-                if (confirm(`Signed in as ${user.username}. Do you want to sign out?`)) {
-                    localStorage.removeItem("privacyguard_active_user");
-                    location.reload();
-                }
+
+            const profileBtn = document.getElementById("pgUserProfileBtn");
+            const dropdown = document.getElementById("pgUserDropdownMenu");
+            const signOutBtn = document.getElementById("pgSignOutBtn");
+
+            profileBtn.addEventListener("click", (e) => {
+                e.stopPropagation();
+                dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
             });
+
+            document.addEventListener("click", () => {
+                if (dropdown) dropdown.style.display = "none";
+            });
+
+            signOutBtn.addEventListener("click", () => {
+                localStorage.removeItem("privacyguard_active_user");
+                wrapper.innerHTML = `
+                    <button class="btn-nav-auth" id="openAuthModalBtn" type="button">
+                        Sign In
+                    </button>
+                `;
+                document.getElementById("openAuthModalBtn")?.addEventListener("click", () => openAuthModal("signin"));
+            });
+
+        } else {
+            wrapper.innerHTML = `
+                <button class="btn-nav-auth" id="openAuthModalBtn" type="button">
+                    Sign In
+                </button>
+            `;
+            document.getElementById("openAuthModalBtn")?.addEventListener("click", () => openAuthModal("signin"));
         }
     }
 
     // Auto-check stored session on load
     document.addEventListener("DOMContentLoaded", () => {
         initAuthModal();
+
         const stored = localStorage.getItem("privacyguard_active_user");
         if (stored) {
             try {
-                updateNavUserUI(JSON.parse(stored));
-            } catch (e) {}
-        }
-
-        // Attach click listener to navbar button
-        const navBtn = document.getElementById("openAuthModalBtn");
-        if (navBtn) {
-            navBtn.addEventListener("click", () => openAuthModal("signin"));
+                renderNavUser(JSON.parse(stored));
+            } catch (e) {
+                renderNavUser(null);
+            }
+        } else {
+            renderNavUser(null);
         }
     });
 

@@ -30,7 +30,7 @@ async function fetchWithTimeout(resource, options = {}, timeoutMs = 4000) {
 // 1. Health check
 async function checkBackendHealth() {
     try {
-        const resp = await fetchWithTimeout(${BACKEND_BASE}/api/stats, { method: 'GET' }, 2500);
+        const resp = await fetchWithTimeout(`${BACKEND_BASE}/api/stats`, { method: 'GET' }, 2500);
         if (resp.ok) {
             const data = await resp.json();
             return { online: true, stats: data.stats || null };
@@ -51,14 +51,14 @@ async function scanText(text, tabId = null) {
     }
 
     try {
-        const resp = await fetchWithTimeout(${BACKEND_BASE}/api/scan/text, {
+        const resp = await fetchWithTimeout(`${BACKEND_BASE}/api/scan/text`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ text })
         }, 5000);
 
         if (!resp.ok) {
-            return { success: false, error: Scan failed with status  };
+            return { success: false, error: `Scan failed with status ${resp.status}` };
         }
 
         const data = await resp.json();
@@ -86,14 +86,14 @@ async function scanText(text, tabId = null) {
 // 3. Analyze Purpose via Backend
 async function analyzePurpose(purpose, detected) {
     try {
-        const resp = await fetchWithTimeout(${BACKEND_BASE}/api/analyze/purpose, {
+        const resp = await fetchWithTimeout(`${BACKEND_BASE}/api/analyze/purpose`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ purpose, detected })
         }, 4000);
 
         if (!resp.ok) {
-            return { success: false, error: Purpose analysis failed with status  };
+            return { success: false, error: `Purpose analysis failed with status ${resp.status}` };
         }
 
         const data = await resp.json();
@@ -110,7 +110,7 @@ async function analyzePurpose(purpose, detected) {
 // 4. Protect Text via Backend
 async function protectText(text, detected, decisions, purpose = null) {
     try {
-        const resp = await fetchWithTimeout(${BACKEND_BASE}/api/protect/text, {
+        const resp = await fetchWithTimeout(`${BACKEND_BASE}/api/protect/text`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -122,7 +122,7 @@ async function protectText(text, detected, decisions, purpose = null) {
         }, 6000);
 
         if (!resp.ok) {
-            return { success: false, error: Protection failed with status  };
+            return { success: false, error: `Protection failed with status ${resp.status}` };
         }
 
         const data = await resp.json();
@@ -191,7 +191,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
             return false;
 
         default:
-            sendResponse({ success: false, error: Unknown message type:  });
+            sendResponse({ success: false, error: `Unknown message type: ${message.type}` });
             return false;
     }
 });

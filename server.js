@@ -132,9 +132,11 @@ function timingMiddleware(req, res, next) {
     const startTime = process.hrtime();
     const originalEnd = res.end;
     res.end = function (...args) {
-        const diff = process.hrtime(startTime);
-        const durationMs = (diff[0] * 1e3 + diff[1] * 1e-6).toFixed(2);
-        res.setHeader("X-Response-Time", `${durationMs}ms`);
+        if (!res.headersSent) {
+            const diff = process.hrtime(startTime);
+            const durationMs = (diff[0] * 1e3 + diff[1] * 1e-6).toFixed(2);
+            res.setHeader("X-Response-Time", `${durationMs}ms`);
+        }
         originalEnd.apply(res, args);
     };
     next();

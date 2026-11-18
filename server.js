@@ -709,10 +709,10 @@ const server = http.createServer((req, res) => {
             if (pathname === "/api/ai/copilot" && req.method === "POST") {
                 const body = await readJsonBody(req);
                 const userPrompt = body.prompt || "";
-                
+
                 // Prompt injection guard
                 const isSuspicious = /ignore\s+(all\s+)?(previous|prior)\s+instructions|<system>|you\s+are\s+now/i.test(userPrompt);
-                
+
                 if (isSuspicious) {
                     res.writeHead(400, { "Content-Type": "application/json" });
                     res.end(JSON.stringify({
@@ -804,6 +804,7 @@ const server = http.createServer((req, res) => {
             }
 
             // ----------------------------------------------------------------
+            // F. STATIC FILE SERVING & CLIENT-SIDE REACT APP
             // F. ADVANCED AI APP ENG ENDPOINTS (Agent, Eval, RAG, Stream, Cost)
             // ----------------------------------------------------------------
             // 1. Multi-Step Autonomous Agent & Function Calling (1.0 + 0.3 pts)

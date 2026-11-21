@@ -9,20 +9,28 @@ FROM node:20-alpine AS base
 RUN apk add --no-cache \
     tesseract-ocr \
     tesseract-ocr-data-eng \
-    curl
+    curl \
+    python3
 
 WORKDIR /app
 
-# Copy application files
+# Install dependencies first for Docker layer caching
 COPY package*.json ./
+RUN npm install --omit=dev
+
+# Copy application files (Use JSON array syntax for paths with spaces)
 COPY server.js ./
 COPY README.md ./
 COPY PRD.md ./
 COPY HLD.md ./
 COPY LLD.md ./
-COPY "Privacy Guard" ./"Privacy Guard"
+COPY backend ./backend
+COPY ["Privacy Guard", "./Privacy Guard"]
 COPY extension ./extension
 COPY tests ./tests
+
+# Pre-create runtime directories with correct permissions
+RUN mkdir -p logs backend/uploads backend/protected
 
 # Expose server port
 EXPOSE 8000

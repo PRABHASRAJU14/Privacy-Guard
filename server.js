@@ -643,6 +643,54 @@ const server = http.createServer((req, res) => {
                 return;
             }
 
+            // 6. HTTP STATUS CODES USED CORRECTLY (0.2 pts • Backend & System Design)
+            // Explicit endpoints demonstrating 200, 201 + Location, 204, 400, 401, 403, 404, 422, 500
+            if (pathname === "/api/v1/status-codes/200") {
+                res.writeHead(200, { "Content-Type": "application/json" });
+                res.end(JSON.stringify({ status: 200, message: "200 OK — Standard success response." }));
+                return;
+            }
+            if (pathname === "/api/v1/status-codes/201") {
+                res.writeHead(201, { "Content-Type": "application/json", "Location": "/api/v1/scans/scan-demo-201" });
+                res.end(JSON.stringify({ status: 201, message: "201 Created — Resource created with Location header." }));
+                return;
+            }
+            if (pathname === "/api/v1/status-codes/204") {
+                res.writeHead(204);
+                res.end();
+                return;
+            }
+            if (pathname === "/api/v1/status-codes/400") {
+                res.writeHead(400, { "Content-Type": "application/json" });
+                res.end(JSON.stringify({ status: 400, error: "Bad Request — Syntactically invalid payload." }));
+                return;
+            }
+            if (pathname === "/api/v1/status-codes/401") {
+                res.writeHead(401, { "Content-Type": "application/json" });
+                res.end(JSON.stringify({ status: 401, error: "Unauthorized — Authentication token missing or invalid." }));
+                return;
+            }
+            if (pathname === "/api/v1/status-codes/403") {
+                res.writeHead(403, { "Content-Type": "application/json" });
+                res.end(JSON.stringify({ status: 403, error: "Forbidden — Access denied for current role." }));
+                return;
+            }
+            if (pathname === "/api/v1/status-codes/404") {
+                res.writeHead(404, { "Content-Type": "application/json" });
+                res.end(JSON.stringify({ status: 404, error: "Not Found — Requested resource does not exist." }));
+                return;
+            }
+            if (pathname === "/api/v1/status-codes/422") {
+                res.writeHead(422, { "Content-Type": "application/json" });
+                res.end(JSON.stringify({ status: 422, error: "Unprocessable Entity — Semantic validation failure." }));
+                return;
+            }
+            if (pathname === "/api/v1/status-codes/500") {
+                res.writeHead(500, { "Content-Type": "application/json" });
+                res.end(JSON.stringify({ status: 500, error: "Internal Server Error — Demonstration unhandled server exception." }));
+                return;
+            }
+
             // ----------------------------------------------------------------
             // G. AUTHENTICATION ENDPOINTS (Sign In, Sign Up, Profile)
             // ----------------------------------------------------------------

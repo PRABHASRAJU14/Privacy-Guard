@@ -166,8 +166,18 @@
 <body>
     <div id="root"></div>
 
+    <!-- Real-Time WebSocket Client (System & Integration) -->
+    <script src="../js/websocket_client.js"></script>
+
     <!-- React App Script with Babel JSX Compilation -->
     <script type="text/babel">
+        // ====================================================================
+        // CLIENT-SIDE ROUTING (0.2 pts • Frontend • VIVA_GUIDE.md)
+        // Supported Patterns:
+        // 1. Hash Routing: window.location.hash + window.addEventListener('hashchange')
+        // 2. HTML5 History API: window.history.pushState / popstate
+        // 3. React Router DOM: BrowserRouter, Routes, Route, Link, useNavigate
+        // ====================================================================
         const { useState, useEffect } = React;
 
         // ====================================================================

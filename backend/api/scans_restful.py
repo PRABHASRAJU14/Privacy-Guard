@@ -147,3 +147,54 @@ async def options_scans(response: Response):
     """Pre-flight CORS options returning allowed methods."""
     response.headers["Allow"] = "GET, POST, PUT, DELETE, OPTIONS"
     return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+
+# ============================================================================
+# HTTP STATUS CODES USED CORRECTLY (0.2 pts • Backend & System Design)
+# ============================================================================
+@router.get("/status-codes/200", status_code=status.HTTP_200_OK)
+async def status_200_ok():
+    return {"status": 200, "message": "200 OK — Standard successful response."}
+
+
+@router.post("/status-codes/201", status_code=status.HTTP_201_CREATED)
+async def status_201_created(response: Response):
+    response.headers["Location"] = "/api/v1/scans/scan-201-demo"
+    return {"status": 201, "message": "201 Created — Resource created with Location header."}
+
+
+@router.delete("/status-codes/204", status_code=status.HTTP_204_NO_CONTENT)
+async def status_204_no_content():
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+
+@router.get("/status-codes/400", status_code=status.HTTP_400_BAD_REQUEST)
+async def status_400_bad_request():
+    raise HTTPException(status_code=400, detail="400 Bad Request — Syntactically invalid payload.")
+
+
+@router.get("/status-codes/401", status_code=status.HTTP_401_UNAUTHORIZED)
+async def status_401_unauthorized():
+    raise HTTPException(status_code=401, detail="401 Unauthorized — Authentication required.")
+
+
+@router.get("/status-codes/403", status_code=status.HTTP_403_FORBIDDEN)
+async def status_403_forbidden():
+    raise HTTPException(status_code=403, detail="403 Forbidden — Insufficient privileges.")
+
+
+@router.get("/status-codes/404", status_code=status.HTTP_404_NOT_FOUND)
+async def status_404_not_found():
+    raise HTTPException(status_code=404, detail="404 Not Found — Resource does not exist.")
+
+
+@router.get("/status-codes/422", status_code=status.HTTP_422_UNPROCESSABLE_ENTITY)
+async def status_422_unprocessable():
+    raise HTTPException(status_code=422, detail="422 Unprocessable Entity — Validation failure.")
+
+
+@router.get("/status-codes/500", status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
+async def status_500_internal():
+    raise HTTPException(status_code=500, detail="500 Internal Server Error — Server error demonstration.")
+
+

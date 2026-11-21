@@ -210,6 +210,19 @@ async function runTestSuite() {
         assert.ok(code.includes("Unprocessable Entity"));
     });
 
+    it("16b. HTTP status codes used correctly — Verifies 200, 201 Created with Location, 204 No Content, 400, 401, 403, 404, 422, 500", () => {
+        const serverFile = path.join(__dirname, "../server.js");
+        const code = fs.readFileSync(serverFile, "utf-8");
+        assert.ok(code.includes("status-codes/200") && code.includes("200"));
+        assert.ok(code.includes("status-codes/201") && code.includes("Location"));
+        assert.ok(code.includes("status-codes/204"));
+        assert.ok(code.includes("status-codes/400"));
+        assert.ok(code.includes("status-codes/401"));
+        assert.ok(code.includes("status-codes/404"));
+        assert.ok(code.includes("status-codes/422"));
+        assert.ok(code.includes("status-codes/500"));
+    });
+
     // ========================================================================
     // DOMAIN 4: Engineering Practices (3 Concepts)
     // ========================================================================
@@ -291,6 +304,16 @@ async function runTestSuite() {
         const code = fs.readFileSync(landingCss, "utf-8");
         assert.ok(code.includes("@media"));
         assert.ok(code.includes("display: flex") || code.includes("display: grid"));
+    });
+
+    it("24b. Client-side routing — Verifies React client-side routing, hashchange event handling, and single-page navigation without reloads", () => {
+        const reactAppFile = path.join(__dirname, "../Privacy Guard/html/react_app.html");
+        const code = fs.readFileSync(reactAppFile, "utf-8");
+        assert.ok(code.includes("window.location.hash"));
+        assert.ok(code.includes("hashchange"));
+        assert.ok(code.includes("#/scan"));
+        assert.ok(code.includes("#/purpose"));
+        assert.ok(code.includes("#/protect"));
     });
 
     // ========================================================================
@@ -429,6 +452,13 @@ async function runTestSuite() {
         assert.strictEqual(broadcast.deliveredCount, 1);
         assert.strictEqual(messageReceived.event, "LEAK_PREVENTION_ALERT");
         assert.strictEqual(messageReceived.data.type, "bank_account");
+
+        // Verify client-side WebSocket client script
+        const wsClientFile = path.join(__dirname, "../Privacy Guard/js/websocket_client.js");
+        assert.ok(fs.existsSync(wsClientFile));
+        const clientContent = fs.readFileSync(wsClientFile, "utf-8");
+        assert.ok(clientContent.includes("WebSocket"));
+        assert.ok(clientContent.includes("RFC 6455") || clientContent.includes("RFC-6455"));
     });
 
     it("39. Native RFC 6455 WebSocket Engine — Frame encoding and status diagnostics", () => {

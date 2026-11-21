@@ -657,9 +657,6 @@
                             </div>
                             <strong style="color:#fff; font-size:12.5px; word-break:break-all;">${user.email || user.username}</strong>
                         </div>
-                        <a href="/app" style="display:flex; align-items:center; gap:8px; padding:10px 14px; color:#cbd5e1; text-decoration:none; font-size:12.5px; transition: background 0.15s;" onmouseover="this.style.background='rgba(255,255,255,0.06)'" onmouseout="this.style.background='transparent'">
-                            <span>⚛️</span> <span>React Dashboard</span>
-                        </a>
                         <button id="pgSwitchAccountBtn" type="button" style="width:100%; text-align:left; background:none; border:none; padding:10px 14px; color:#93c5fd; font-size:12.5px; cursor:pointer; display:flex; align-items:center; gap:8px; transition: background 0.15s;" onmouseover="this.style.background='rgba(255,255,255,0.06)'" onmouseout="this.style.background='transparent'">
                             <span>🔄</span> <span>Switch Account / Provider</span>
                         </button>

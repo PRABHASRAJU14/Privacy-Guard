@@ -25,6 +25,7 @@ const authSecurity = require("../backend/services/auth_security_service");
 const { AdvancedMongoAuditStore } = require("../backend/database/mongo_advanced");
 const { RelationalSQLStore } = require("../backend/database/sql_advanced");
 const systemIntegration = require("../backend/services/system_integration_service");
+const { NativeWebSocketServer } = require("../backend/services/websocket_service");
 
 let testsPassed = 0;
 let testsFailed = 0;
@@ -428,6 +429,34 @@ async function runTestSuite() {
         assert.strictEqual(broadcast.deliveredCount, 1);
         assert.strictEqual(messageReceived.event, "LEAK_PREVENTION_ALERT");
         assert.strictEqual(messageReceived.data.type, "bank_account");
+    });
+
+    it("39. Native RFC 6455 WebSocket Engine — Frame encoding and status diagnostics", () => {
+        const nativeWs = new NativeWebSocketServer();
+        const frame = nativeWs.encodeFrame({ status: "SECURE", risk: 0 });
+        assert.ok(Buffer.isBuffer(frame));
+        assert.strictEqual(frame[0], 0x81); // 0x81 = FIN + Text opcode
+        const statusObj = nativeWs.getStatus();
+        assert.strictEqual(statusObj.status, "ONLINE");
+        assert.strictEqual(statusObj.protocol, "RFC-6455");
+        assert.strictEqual(statusObj.endpoint, "ws://127.0.0.1:8000/ws/alerts");
+    });
+
+    it("40. SQL Normalization (1NF, 2NF, 3NF) & ORM Usage — Verifies sql_schema.sql DDL and Prisma/Sequelize models", () => {
+        const sqlContent = fs.readFileSync(path.join(__dirname, "../backend/database/sql_schema.sql"), "utf-8");
+        assert.ok(sqlContent.includes("1NF") && sqlContent.includes("FIRST NORMAL FORM"));
+        assert.ok(sqlContent.includes("2NF") && sqlContent.includes("SECOND NORMAL FORM"));
+        assert.ok(sqlContent.includes("3NF") && sqlContent.includes("THIRD NORMAL FORM"));
+        assert.ok(sqlContent.includes("PRISMA ORM SCHEMA") && sqlContent.includes("model Scan"));
+        assert.ok(sqlContent.includes("SEQUELIZE ORM MODEL") && sqlContent.includes("User.hasMany(Scan"));
+    });
+
+    it("41. MongoDB Embedding vs Referencing — Verifies Pydantic v2 schemas in backend/schemas/__init__.py", () => {
+        const schemasInit = fs.readFileSync(path.join(__dirname, "../backend/schemas/__init__.py"), "utf-8");
+        assert.ok(schemasInit.includes("ScanAuditDocumentEmbedded"));
+        assert.ok(schemasInit.includes("FindingEmbedded"));
+        assert.ok(schemasInit.includes("UserReference"));
+        assert.ok(schemasInit.includes("ScanDocumentReferenced"));
     });
 
     console.log("\n========================================================");

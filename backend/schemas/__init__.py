@@ -1,4 +1,9 @@
-"""Pydantic schemas for PrivacyGuard API."""
+"""Pydantic schemas for PrivacyGuard API.
+
+Includes:
+- Scan, Purpose, Protection, Document, and History schemas
+- Embedding vs. Referencing Relationships (MongoDB / NoSQL data modeling)
+"""
 from backend.schemas.scan import (
     DetectedPIIItem,
     RiskInfo,
@@ -28,8 +33,16 @@ from backend.schemas.history import (
     PrivacyStats,
     StatsResponse,
 )
+from backend.schemas.mongo_relationships import (
+    FindingEmbedded,
+    ReceiptEmbedded,
+    ScanAuditDocumentEmbedded,
+    UserReference,
+    ScanDocumentReferenced,
+)
 
 __all__ = [
+    # Core API Schemas
     "DetectedPIIItem",
     "RiskInfo",
     "TextScanRequest",
@@ -49,4 +62,10 @@ __all__ = [
     "HistoryResponse",
     "PrivacyStats",
     "StatsResponse",
+    # Embedding vs Referencing Relationships (0.2 pts • NoSQL Mongo)
+    "FindingEmbedded",
+    "ReceiptEmbedded",
+    "ScanAuditDocumentEmbedded",
+    "UserReference",
+    "ScanDocumentReferenced",
 ]

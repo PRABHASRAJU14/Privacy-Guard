@@ -860,9 +860,6 @@ const server = http.createServer((req, res) => {
                 res.end(JSON.stringify(result));
                 return;
             }
-                res.end(JSON.stringify(result));
-                return;
-            }
 
             // ----------------------------------------------------------------
             // F. STATIC FILE SERVING & CLIENT-SIDE REACT APP

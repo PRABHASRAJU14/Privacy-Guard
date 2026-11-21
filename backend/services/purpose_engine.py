@@ -240,7 +240,19 @@ def analyze_purpose(
     protect_list: List[str] = []
 
     for item in detected:
-        t = item.type.lower()
+        item_type = item.get("type", "") if isinstance(item, dict) else getattr(item, "type", "")
+        item_label = (
+            item.get("label", item_type.replace("_", " ").title())
+            if isinstance(item, dict)
+            else getattr(item, "label", item_type.replace("_", " ").title())
+        )
+        item_value = item.get("value", "") if isinstance(item, dict) else getattr(item, "value", "")
+        item_severity = (
+            item.get("severity", "MEDIUM")
+            if isinstance(item, dict)
+            else getattr(item, "severity", "MEDIUM")
+        )
+        t = item_type.lower()
 
         # Decision rule:
         # If explicitly in keep and not in protect -> KEEP
@@ -253,22 +265,22 @@ def analyze_purpose(
             decision = "PROTECT"
             reason = reasons_map.get(
                 t,
-                f"This {item.label} is unnecessary for the purpose of {policy['label']}."
+                f"This {item_label} is unnecessary for the purpose of {policy['label']}."
             )
 
         if decision == "KEEP":
-            keep_list.append(item.label)
+            keep_list.append(item_label)
         else:
-            protect_list.append(item.label)
+            protect_list.append(item_label)
 
         recommendations.append(
             RecommendationItem(
-                type=item.type,
-                label=item.label,
+                type=item_type,
+                label=item_label,
                 decision=decision,
                 reason=reason,
-                value=item.value,
-                severity=item.severity,
+                value=item_value,
+                severity=item_severity,
             )
         )
 

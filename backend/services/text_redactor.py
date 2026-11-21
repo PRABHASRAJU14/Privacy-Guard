@@ -129,24 +129,35 @@ def redact_text(
     if not original_text or not detected_items:
         return original_text, 0, 0
 
+    def get_val(obj, key, default=None):
+        if isinstance(obj, dict):
+            return obj.get(key, default)
+        return getattr(obj, key, default)
+
     # Sort items by start offset descending (reverse order)
     # This prevents replacement length differences from offsetting earlier spans
-    sorted_items = sorted(detected_items, key=lambda x: x.start, reverse=True)
+    sorted_items = sorted(detected_items, key=lambda x: get_val(x, "start", 0), reverse=True)
 
     text_chars = list(original_text)
     protected_count = 0
     kept_count = 0
 
     for item in sorted_items:
+        i_type = str(get_val(item, "type", "") or "")
+        i_label = str(get_val(item, "label", i_type.replace("_", " ").title()) or "")
+        i_value = str(get_val(item, "value", "") or "")
+        i_start = get_val(item, "start", 0)
+        i_end = get_val(item, "end", i_start + len(i_value))
+
         # Determine decision: decisions map can key by type, label, or exact value
         decision = decisions.get(
-            item.type.lower(),
+            i_type.lower(),
             decisions.get(
-                item.label.lower(),
-                decisions.get(item.value, "PROTECT"),
+                i_label.lower(),
+                decisions.get(i_value, "PROTECT"),
             ),
         )
-        decision = decision.upper().strip()
+        decision = str(decision).upper().strip()
 
         if decision == "KEEP":
             kept_count += 1
@@ -154,11 +165,11 @@ def redact_text(
 
         # Otherwise decision is PROTECT
         protected_count += 1
-        masked_val = get_mask_for_item(item.type, item.value)
+        masked_val = get_mask_for_item(i_type, i_value)
 
         # Slice replacement
-        start = item.start
-        end = item.end
+        start = i_start
+        end = i_end
         if 0 <= start <= end <= len(text_chars):
             text_chars[start:end] = list(masked_val)
 

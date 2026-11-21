@@ -134,12 +134,16 @@ const MIME_TYPES = {
 const rateLimiter = jsConcepts.createRateLimiter(60, 60000); // 60 requests/min
 
 function securityHeadersMiddleware(req, res, next) {
-    res.setHeader("Access-Control-Allow-Origin", "*");
-    res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-    res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Requested-With");
-    res.setHeader("X-Content-Type-Options", "nosniff");
-    res.setHeader("X-Frame-Options", "SAMEORIGIN");
-    res.setHeader("X-XSS-Protection", "1; mode=block");
+    try {
+        if (!res.headersSent) {
+            res.setHeader("Access-Control-Allow-Origin", "*");
+            res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+            res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Requested-With");
+            res.setHeader("X-Content-Type-Options", "nosniff");
+            res.setHeader("X-Frame-Options", "SAMEORIGIN");
+            res.setHeader("X-XSS-Protection", "1; mode=block");
+        }
+    } catch (e) {}
     next();
 }
 
@@ -149,17 +153,21 @@ function timingMiddleware(req, res, next) {
     res.end = function (...args) {
         const diff = process.hrtime(startTime);
         const durationMs = (diff[0] * 1e3 + diff[1] * 1e-6).toFixed(2);
-        if (!res.headersSent) {
-            res.setHeader("X-Response-Time", `${durationMs}ms`);
-        }
+        try {
+            if (!res.headersSent) {
+                res.setHeader("X-Response-Time", `${durationMs}ms`);
+            }
+        } catch (e) {}
         // Domain Logger for HTTP Response matter
-        httpLogger.info("HTTP_RESPONSE", `${req.method} ${req.url} -> ${res.statusCode} (${durationMs}ms)`, {
-            method: req.method,
-            url: req.url,
-            statusCode: res.statusCode,
-            durationMs: parseFloat(durationMs)
-        });
-        originalEnd.apply(res, args);
+        try {
+            httpLogger.info("HTTP_RESPONSE", `${req.method} ${req.url} -> ${res.statusCode} (${durationMs}ms)`, {
+                method: req.method,
+                url: req.url,
+                statusCode: res.statusCode,
+                durationMs: parseFloat(durationMs)
+            });
+        } catch (e) {}
+        return originalEnd.apply(res, args);
     };
     next();
 }
@@ -1264,6 +1272,16 @@ const server = http.createServer((req, res) => {
 
                 res.writeHead(200, { "Content-Type": contentType });
                 const stream = fs.createReadStream(filePath);
+                stream.on("error", () => {
+                    try {
+                        if (!res.headersSent) {
+                            res.writeHead(500, { "Content-Type": "application/json" });
+                            res.end(JSON.stringify({ status: 500, error: "Stream error occurred" }));
+                        } else {
+                            res.destroy();
+                        }
+                    } catch (e) {}
+                });
                 stream.pipe(res);
             });
 
